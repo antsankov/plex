@@ -1,12 +1,12 @@
 import * as React from "react";
-import { DebtEntity } from "../../../../models";
+import { FilledDebtEntity } from "../../../../models";
 // import { formatDate } from '../../../../utils';
 import { Col } from "reactstrap";
 import { DebtOrderRowContainer } from "./DebtOrderRowContainer";
 import { Wrapper, Title, TableHeaderRow } from "./styledComponents";
 
 interface Props {
-    debtEntities: DebtEntity[];
+    debtEntities: FilledDebtEntity[];
 }
 
 class DebtOrderHistory extends React.Component<Props, {}> {

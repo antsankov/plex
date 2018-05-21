@@ -1,5 +1,10 @@
 import * as React from "react";
-import { DebtEntity, FilledCollateralizedDebtEntity, OpenDebtEntity } from "../../../models";
+import {
+    DebtEntity,
+    FilledCollateralizedDebtEntity,
+    FilledDebtEntity,
+    OpenDebtEntity,
+} from "../../../models";
 import { Header, MainWrapper } from "../../../components";
 import { DebtsMetricsContainer } from "./DebtsMetrics/DebtsMetricsContainer";
 import { ActiveDebtOrderContainer } from "./ActiveDebtOrder/ActiveDebtOrderContainer";
@@ -17,7 +22,7 @@ interface Props {
 interface State {
     allDebtEntities: DebtEntity[];
     activeDebtEntities: DebtEntity[];
-    inactiveDebtEntities: DebtEntity[];
+    inactiveDebtEntities: FilledDebtEntity[];
 }
 
 class Debts extends React.Component<Props, State> {
@@ -46,7 +51,7 @@ class Debts extends React.Component<Props, State> {
         }
         const allDebtEntities: DebtEntity[] = [];
         const activeDebtEntities: DebtEntity[] = [];
-        const inactiveDebtEntities: DebtEntity[] = [];
+        const inactiveDebtEntities: FilledDebtEntity[] = [];
         for (let debtEntity of debtEntities) {
             if (
                 debtEntity instanceof OpenDebtEntity ||
@@ -58,7 +63,7 @@ class Debts extends React.Component<Props, State> {
             ) {
                 activeDebtEntities.push(debtEntity);
             } else {
-                inactiveDebtEntities.push(debtEntity);
+                inactiveDebtEntities.push(debtEntity as FilledDebtEntity);
             }
             allDebtEntities.push(debtEntity);
         }
