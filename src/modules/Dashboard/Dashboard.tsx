@@ -90,6 +90,7 @@ class Dashboard extends React.Component<Props, States> {
                 const collateralReturnable = await dharma.adapters.collateralizedSimpleInterestLoan.canReturnCollateral(
                     issuanceHash,
                 );
+                const collateralWithdrawn = await this.collateralWithdrawn(dharma, issuanceHash);
 
                 const debtEntity: FilledCollateralizedDebtEntity = new FilledCollateralizedDebtEntity(
                     {
@@ -97,6 +98,7 @@ class Dashboard extends React.Component<Props, States> {
                         collateralAmount: dharmaDebtOrder.collateralAmount,
                         collateralReturnable,
                         collateralTokenSymbol: dharmaDebtOrder.collateralTokenSymbol,
+                        collateralWithdrawn,
                         creditor: debtRegistryEntry.beneficiary,
                         debtor: accounts[0],
                         dharmaOrder: dharmaDebtOrder,
@@ -175,6 +177,7 @@ class Dashboard extends React.Component<Props, States> {
                 const status = collateralWithdrawn ? "inactive" : "active";
 
                 const investment: InvestmentEntity = {
+                    collateralWithdrawn,
                     creditor: debtRegistryEntry.beneficiary,
                     termsContract: debtRegistryEntry.termsContract,
                     termsContractParameters: debtRegistryEntry.termsContractParameters,

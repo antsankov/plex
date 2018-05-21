@@ -63,7 +63,11 @@ class InvestmentRow extends React.Component<Props, State> {
 
         const delinquent = await this.isDelinquent(dharma, investment.issuanceHash);
 
-        const status = delinquent ? "Delinquent" : "Paid";
+        let status = delinquent ? "Delinquent" : "Paid";
+
+        if (investment.collateralWithdrawn) {
+            status = "Collateral Seized";
+        }
 
         this.setState({
             status,

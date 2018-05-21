@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DebtEntity } from "../../../../models";
+import { FilledCollateralizedDebtEntity, FilledDebtEntity } from "../../../../models";
 import { shortenString, amortizationUnitToFrequency } from "../../../../utils";
 import { Row, Col, Collapse } from "reactstrap";
 import { StyledRow, Drawer, InfoItem, InfoItemTitle, InfoItemContent } from "./styledComponents";
@@ -9,7 +9,7 @@ import { BigNumber } from "bignumber.js";
 
 interface Props {
     dharma: Dharma;
-    debtEntity: DebtEntity;
+    debtEntity: FilledDebtEntity;
 }
 
 interface State {
@@ -40,7 +40,7 @@ class DebtOrderRow extends React.Component<Props, State> {
     }
 
     async determineStatus(dharma: Dharma) {
-        const { debtEntity } = this.props;
+        const debtEntity: FilledDebtEntity = this.props.debtEntity;
         if (!dharma || !debtEntity) {
             return;
         }
@@ -52,11 +52,21 @@ class DebtOrderRow extends React.Component<Props, State> {
         const totalExpectedRepayment = await dharma.servicing.getTotalExpectedRepayment(
             debtEntity.issuanceHash,
         );
+
+        let status = new BigNumber(valueRepaid).lt(new BigNumber(totalExpectedRepayment))
+            ? "Delinquent"
+            : "Paid";
+
+        if (
+            debtEntity instanceof FilledCollateralizedDebtEntity &&
+            debtEntity.collateralWithdrawn
+        ) {
+            status = "Collateral Seized";
+        }
+
         this.setState({
             decimals,
-            status: new BigNumber(valueRepaid).lt(new BigNumber(totalExpectedRepayment))
-                ? "Delinquent"
-                : "Paid",
+            status,
         });
     }
 

@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-    DebtEntity,
-    FilledCollateralizedDebtEntity,
-    FilledDebtEntity,
-    OpenDebtEntity,
-} from "../../../models";
+import { DebtEntity, FilledCollateralizedDebtEntity, OpenDebtEntity } from "../../../models";
 import { Header, MainWrapper } from "../../../components";
 import { DebtsMetricsContainer } from "./DebtsMetrics/DebtsMetricsContainer";
 import { ActiveDebtOrderContainer } from "./ActiveDebtOrder/ActiveDebtOrderContainer";
@@ -55,8 +50,9 @@ class Debts extends React.Component<Props, State> {
         for (let debtEntity of debtEntities) {
             if (
                 debtEntity instanceof OpenDebtEntity ||
-                (debtEntity instanceof FilledDebtEntity &&
-                    debtEntity.repaidAmount.lt(debtEntity.totalExpectedRepayment)) ||
+                (debtEntity instanceof FilledCollateralizedDebtEntity &&
+                    debtEntity.repaidAmount.lt(debtEntity.totalExpectedRepayment) &&
+                    !debtEntity.collateralWithdrawn) ||
                 (debtEntity instanceof FilledCollateralizedDebtEntity &&
                     debtEntity.collateralReturnable)
             ) {

@@ -6,6 +6,7 @@ export class InvestmentEntity {
     collateralized?: boolean;
     collateralSeizable?: boolean;
     collateralTokenSymbol?: string;
+    collateralWithdrawn: boolean;
     creditor: string;
     earnedAmount: BigNumber;
     gracePeriodInDays?: BigNumber;

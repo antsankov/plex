@@ -8,4 +8,5 @@ export class FilledCollateralizedDebtEntity extends FilledDebtEntity
     collateralTokenSymbol: string;
     gracePeriodInDays: BigNumber;
     collateralReturnable: boolean;
+    collateralWithdrawn: boolean;
 }
