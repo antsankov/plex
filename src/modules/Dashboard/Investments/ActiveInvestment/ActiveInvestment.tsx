@@ -172,8 +172,9 @@ class ActiveInvestment extends React.Component<Props, State> {
     }
 
     render() {
-        const { currentTime, investment } = this.props;
-        if (!investment || currentTime === undefined) {
+        const { currentTime, investment, tokens } = this.props;
+
+        if (!investment || currentTime === undefined || tokens.length === 0) {
             return null;
         }
 
@@ -247,7 +248,7 @@ class ActiveInvestment extends React.Component<Props, State> {
             issuanceHash,
         } = investment;
 
-        if (collateralSeizable && collateralAmount && collateralTokenSymbol) {
+        if (collateralAmount && collateralTokenSymbol) {
             const collateralToken = this.props.tokens.find((token) => {
                 return token.symbol === collateralTokenSymbol;
             });
@@ -281,7 +282,7 @@ class ActiveInvestment extends React.Component<Props, State> {
                     </InfoItem>
                 </Col>
             );
-            seizeCollateralModalContent = (
+            seizeCollateralModalContent = collateralSeizable ? (
                 <span>
                     Debt agreement <Bold>{shortenString(issuanceHash)}</Bold> has defaulted and its
                     collateral is seizable. Would you like to seize the borrower's collateral of{" "}
@@ -291,6 +292,8 @@ class ActiveInvestment extends React.Component<Props, State> {
                         tokenSymbol={collateralTokenSymbol}
                     />
                 </span>
+            ) : (
+                <div />
             );
         }
 
