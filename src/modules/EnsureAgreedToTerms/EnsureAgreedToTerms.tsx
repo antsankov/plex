@@ -1,6 +1,8 @@
 import * as React from "react";
 import { browserHistory } from "react-router";
 
+import { WalkthroughContainer } from "../../components";
+
 interface Props {
     agreeToTerms: boolean;
 }
@@ -20,7 +22,12 @@ class EnsureAgreedToTerms extends React.Component<Props, {}> {
 
     render() {
         if (this.props.agreeToTerms) {
-            return this.props.children;
+            return (
+                <div>
+                    <WalkthroughContainer />
+                    {this.props.children}
+                </div>
+            );
         } else {
             return null;
         }

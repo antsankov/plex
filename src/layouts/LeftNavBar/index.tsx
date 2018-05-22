@@ -25,7 +25,7 @@ class LeftNavBar extends React.Component {
                     Fill Loan
                 </StyledLink>
 
-                <TradingPermissionsContainer className="left" />
+                <TradingPermissionsContainer className="TradingPermissionsContainer left" />
             </Wrapper>
         );
     }
