@@ -53,22 +53,35 @@ interface Props {
     shortenUrl: (url: string, path?: string, queryParams?: object) => Promise<string>;
 }
 
-interface State {
-    amortizationUnit?: string;
+interface RequiredState {
     awaitingSignTx: boolean;
-    collateralTokenAmount?: Types.TokenAmount;
     confirmationModal: boolean;
-    debtOrderInstance?: Types.DebtOrder;
     description: string;
     formData: any;
-    gracePeriodInDays?: BigNumber;
-    interestRate?: BigNumber;
+    gracePeriodInDays: BigNumber;
     issuanceHash: string;
+}
+
+// State comprises of both required and optional state parameters.
+interface State extends RequiredState {
+    amortizationUnit?: string;
+    collateralTokenAmount?: Types.TokenAmount;
+    debtOrderInstance?: Types.DebtOrder;
+    interestRate?: BigNumber;
     principalTokenAmount?: Types.TokenAmount;
     termLength?: BigNumber;
 }
 
 class RequestLoanForm extends React.Component<Props, State> {
+    private defaultState: RequiredState = {
+        formData: {},
+        description: "",
+        issuanceHash: "",
+        confirmationModal: false,
+        awaitingSignTx: false,
+        gracePeriodInDays: new BigNumber(0),
+    };
+
     constructor(props: Props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
@@ -78,13 +91,7 @@ class RequestLoanForm extends React.Component<Props, State> {
         this.validateForm = this.validateForm.bind(this);
         this.transformErrors = this.transformErrors.bind(this);
 
-        this.state = {
-            formData: {},
-            description: "",
-            issuanceHash: "",
-            confirmationModal: false,
-            awaitingSignTx: false,
-        };
+        this.state = this.defaultState;
     }
 
     handleChange(formData: any) {
@@ -133,12 +140,17 @@ class RequestLoanForm extends React.Component<Props, State> {
                 });
             }
 
-            if (formData.collateral.gracePeriodInDays) {
-                this.setState({
-                    gracePeriodInDays: new BigNumber(formData.collateral.gracePeriodInDays),
-                });
-            }
+            this.setGracePeriod(formData);
         }
+    }
+
+    setGracePeriod(formData: any) {
+        const formPeriod = formData.collateral.gracePeriodInDays;
+        const defaultPeriod = this.defaultState.gracePeriodInDays!;
+
+        this.setState({
+            gracePeriodInDays: formPeriod ? new BigNumber(formPeriod) : defaultPeriod,
+        });
     }
 
     async handleSubmit() {
@@ -169,7 +181,7 @@ class RequestLoanForm extends React.Component<Props, State> {
                 amortizationUnit: amortizationUnit!,
                 collateralAmount: collateralTokenAmount!.rawAmount,
                 collateralTokenSymbol: collateralTokenAmount!.tokenSymbol,
-                gracePeriodInDays: gracePeriodInDays!,
+                gracePeriodInDays: gracePeriodInDays,
                 interestRate: interestRate!,
                 principalAmount: principalTokenAmount!.rawAmount,
                 principalTokenSymbol: principalTokenAmount!.tokenSymbol,
