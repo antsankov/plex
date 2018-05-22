@@ -181,10 +181,10 @@ class AppRouter extends React.Component<Props, {}> {
                             <IndexRoute component={RequestLoanFormContainer} />
                             <Route path="success" component={RequestLoanSuccessContainer} />
                         </Route>
-                        <Route path="/fill" component={ParentContainer}>
-                            <IndexRoute component={FillLoanEmpty} />
-                            <Route path="loan" component={FillLoanEnteredContainer} />
-                        </Route>
+                    </Route>
+                    <Route path="/fill" component={ParentContainer}>
+                        <IndexRoute component={FillLoanEmpty} />
+                        <Route path="loan" component={FillLoanEnteredContainer} />
                     </Route>
                     <Route path="/plex" component={DefaultContent} />
                     <Route path="/whitepaper" component={DefaultContent} />
