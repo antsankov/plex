@@ -128,12 +128,12 @@ export const Footer = styled.div`
     bottom: 0px;
     height: 60px;
     padding: 1rem;
-    position: fixed;
+    position: relative;
     right: 0px;
-    text-align: right;
+    text-align: center;
 `;
 
-export const FooterLink = styled(Link)`
+const footerLinkStyles = `
     display: inline-block;
     margin: 0 10px;
     font-family: DIN-Bold;
@@ -146,6 +146,14 @@ export const FooterLink = styled(Link)`
         color: #002326;
         text-decoration: none;
     }
+`;
+
+export const FooterA = styled.a`
+    ${footerLinkStyles};
+`;
+
+export const FooterLink = styled(Link)`
+    ${footerLinkStyles};
 `;
 
 export const LayoutObfuscator = styled.div`

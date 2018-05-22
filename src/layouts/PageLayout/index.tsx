@@ -15,6 +15,7 @@ import {
     Main,
     Content,
     Footer,
+    FooterA,
     FooterLink,
     Layout,
     LayoutObfuscator,
@@ -95,6 +96,12 @@ class PageLayout extends React.Component<{}, State> {
                             <Footer>
                                 <FooterLink to="/terms">Terms of Use</FooterLink>
                                 <FooterLink to="/privacy">Privacy Policy</FooterLink>
+                                <FooterA
+                                    href="https://airtable.com/shrMjBS1pyM1iAJzQ"
+                                    target="_blank"
+                                >
+                                    Give Us Feedback
+                                </FooterA>
                             </Footer>
                         </Content>
                     </Main>
