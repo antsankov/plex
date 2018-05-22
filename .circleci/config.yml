@@ -21,3 +21,12 @@ jobs:
         - run: yarn contracts:migrate
         - run: yarn migrations:loans
         - run: yarn jest --maxWorkers 2
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
