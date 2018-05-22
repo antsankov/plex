@@ -91,8 +91,6 @@ interface State {
     principalTokenDecimals: BigNumber;
     returningCollateral: boolean;
     showReturnCollateralModal: boolean;
-    totalExpectedRepaymentValue: BigNumber;
-    valueRepaidToDate: BigNumber;
 }
 
 class ActiveDebtOrder extends React.Component<Props, State> {
@@ -110,8 +108,6 @@ class ActiveDebtOrder extends React.Component<Props, State> {
             principalTokenDecimals: new BigNumber(0),
             returningCollateral: false,
             showReturnCollateralModal: false,
-            totalExpectedRepaymentValue: new BigNumber(0),
-            valueRepaidToDate: new BigNumber(0),
         };
 
         this.toggleDrawer = this.toggleDrawer.bind(this);
@@ -132,7 +128,6 @@ class ActiveDebtOrder extends React.Component<Props, State> {
         this.retrieveTokenDecimals();
         // Calculate which payments have been missed, so as to display that in the repayment schedule.
         this.calculatePaymentsMissed();
-        this.retrieveServicingValues();
     }
 
     toggleDrawer() {
@@ -279,10 +274,23 @@ class ActiveDebtOrder extends React.Component<Props, State> {
     }
 
     async handleRepaymentFormSubmission(tokenAmount: BigNumber, tokenSymbol: string) {
-        this.props.handleSetErrorToast("");
-        const { dharma } = this.props;
+        const {
+            debtEntity,
+            dharma,
+            handleSetErrorToast,
+            handleSetSuccessToast,
+            handleSuccessfulRepayment,
+            updateDebtEntity,
+        } = this.props;
+
+        handleSetErrorToast("");
+
         if (!dharma) {
-            this.props.handleSetErrorToast(web3Errors.UNSUPPORTED_NETWORK);
+            handleSetErrorToast(web3Errors.UNSUPPORTED_NETWORK);
+            return;
+        }
+
+        if (!(debtEntity instanceof FilledDebtEntity)) {
             return;
         }
 
@@ -292,7 +300,7 @@ class ActiveDebtOrder extends React.Component<Props, State> {
         this.setState({ awaitingRepaymentTx: true });
 
         dharma.servicing
-            .makeRepayment(this.props.debtEntity.issuanceHash, tokenAmount, tokenAddress)
+            .makeRepayment(debtEntity.issuanceHash, tokenAmount, tokenAddress)
             .then((txHash) => {
                 return dharma.blockchain.awaitTransactionMinedAsync(
                     txHash,
@@ -307,22 +315,33 @@ class ActiveDebtOrder extends React.Component<Props, State> {
                 this.setState({ makeRepayment: false, awaitingRepaymentTx: false });
 
                 if (errors.length > 0) {
-                    if (this.props.debtEntity.principalTokenSymbol !== tokenSymbol) {
-                        this.props.handleSetErrorToast(
+                    if (debtEntity.principalTokenSymbol !== tokenSymbol) {
+                        handleSetErrorToast(
                             `Repayments to debt agreement ${shortenString(
                                 this.props.debtEntity.issuanceHash,
                             )} must be made in ${this.props.debtEntity.principalTokenSymbol}`,
                         );
                     } else {
-                        this.props.handleSetErrorToast(errors[0]);
+                        handleSetErrorToast(errors[0]);
                     }
                 } else {
-                    this.props.handleSuccessfulRepayment(
+                    debtEntity.repaidAmount = debtEntity.repaidAmount.plus(tokenAmount);
+
+                    if (
+                        debtEntity instanceof FilledCollateralizedDebtEntity &&
+                        debtEntity.repaidAmount.eq(debtEntity.totalExpectedRepayment)
+                    ) {
+                        debtEntity.collateralReturnable = true;
+                    }
+
+                    updateDebtEntity(debtEntity);
+
+                    handleSuccessfulRepayment(
                         this.props.debtEntity.issuanceHash,
                         tokenAmount,
                         tokenSymbol,
                     );
-                    this.props.handleSetSuccessToast(
+                    handleSetSuccessToast(
                         <div>
                             Successfully made repayment of{" "}
                             <TokenAmount
@@ -368,18 +387,6 @@ class ActiveDebtOrder extends React.Component<Props, State> {
         }
 
         this.setState({ missedPayments });
-    }
-
-    async retrieveServicingValues() {
-        const { debtEntity, dharma } = this.props;
-
-        const totalExpectedRepaymentValue = await dharma.servicing.getTotalExpectedRepayment(
-            debtEntity.issuanceHash,
-        );
-
-        const valueRepaidToDate = await dharma.servicing.getValueRepaid(debtEntity.issuanceHash);
-
-        this.setState({ totalExpectedRepaymentValue, valueRepaidToDate });
     }
 
     async retrieveTokenDecimals() {
@@ -667,23 +674,27 @@ class ActiveDebtOrder extends React.Component<Props, State> {
                         </Row>
                     </Drawer>
                 </Collapse>
-                <MakeRepaymentModal
-                    tokens={tokens}
-                    modal={this.state.makeRepayment}
-                    issuanceHash={debtEntity.issuanceHash}
-                    principalTokenDecimals={this.state.principalTokenDecimals}
-                    principalTokenSymbol={debtEntity.principalTokenSymbol}
-                    totalExpectedRepaymentValue={this.state.totalExpectedRepaymentValue}
-                    amountAlreadyRepaid={this.state.valueRepaidToDate}
-                    title="Make Repayment"
-                    closeButtonText="Nevermind"
-                    submitButtonText={
-                        this.state.awaitingRepaymentTx ? "Making Repayment..." : "Make Repayment"
-                    }
-                    awaitingTx={this.state.awaitingRepaymentTx}
-                    onToggle={this.toggleRepaymentModal}
-                    onSubmit={this.handleRepaymentFormSubmission}
-                />
+                {debtEntity instanceof FilledDebtEntity ? (
+                    <MakeRepaymentModal
+                        tokens={tokens}
+                        modal={this.state.makeRepayment}
+                        issuanceHash={debtEntity.issuanceHash}
+                        principalTokenDecimals={this.state.principalTokenDecimals}
+                        principalTokenSymbol={debtEntity.principalTokenSymbol}
+                        totalExpectedRepaymentValue={debtEntity.totalExpectedRepayment}
+                        amountAlreadyRepaid={debtEntity.repaidAmount}
+                        title="Make Repayment"
+                        closeButtonText="Nevermind"
+                        submitButtonText={
+                            this.state.awaitingRepaymentTx
+                                ? "Making Repayment..."
+                                : "Make Repayment"
+                        }
+                        awaitingTx={this.state.awaitingRepaymentTx}
+                        onToggle={this.toggleRepaymentModal}
+                        onSubmit={this.handleRepaymentFormSubmission}
+                    />
+                ) : null}
                 <ConfirmationModal
                     modal={this.state.confirmationModal}
                     title="Please confirm"
