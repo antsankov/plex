@@ -24,6 +24,12 @@ jobs:
         - run: yarn contracts:migrate
         - run: yarn migrations:loans
         - run: yarn jest --maxWorkers 2
+  deploy:
+      docker:
+        - image: circleci/node:9.6.1
+      steps:
+        - checkout
+        - run: yarn deploy
 
 workflows:
   version: 2
