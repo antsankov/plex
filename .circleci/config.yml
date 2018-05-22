@@ -6,12 +6,18 @@ jobs:
       - image: circleci/node:9.6.1
     steps:
         - checkout
-        - run: yarn
+        - run:
+            name: install dependencies
+            command: yarn
         - run:
             name: testrpc
             command: yarn chain
             background: true
-        - run: sleep 6
+  test:
+      docker:
+        - image: circleci/node:9.6.1
+      steps:
+        - checkout
         - run: yarn contracts:migrate
         - run: yarn migrations:loans
         - run: yarn jest --maxWorkers 2
