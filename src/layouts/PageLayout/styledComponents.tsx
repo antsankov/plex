@@ -125,9 +125,12 @@ export const Content = styled.div`
 `;
 
 export const Footer = styled.div`
-    padding: 1rem;
-    text-align: right;
+    bottom: 0px;
     height: 60px;
+    padding: 1rem;
+    position: fixed;
+    right: 0px;
+    text-align: right;
 `;
 
 export const FooterLink = styled(Link)`
