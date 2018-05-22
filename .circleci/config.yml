@@ -10,14 +10,17 @@ jobs:
             name: install dependencies
             command: yarn
         - run:
-            name: testrpc
-            command: yarn chain
-            background: true
+            name: compile
+            command: yarn start
   test:
       docker:
         - image: circleci/node:9.6.1
       steps:
         - checkout
+        - run:
+            name: testrpc
+            command: yarn chain
+            background: true
         - run: yarn contracts:migrate
         - run: yarn migrations:loans
         - run: yarn jest --maxWorkers 2
