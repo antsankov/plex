@@ -1,6 +1,7 @@
 // External Libraries
 import * as React from "react";
 import * as _ from "lodash";
+import * as ReactGA from "react-ga";
 import * as Web3 from "web3";
 import { Dharma } from "@dharmaprotocol/dharma.js";
 import { BigNumber } from "bignumber.js";
@@ -169,10 +170,15 @@ class AppRouter extends React.Component<Props, {}> {
         return web3.toWei(recommendation.div(10), "gwei");
     }
 
+    trackPageView() {
+        ReactGA.pageview(window.location.pathname);
+    }
+
     render() {
         const history = syncHistoryWithStore(browserHistory, this.props.store);
+
         return (
-            <Router history={history}>
+            <Router history={history} onUpdate={this.trackPageView}>
                 <Route path="/" component={AppContainer}>
                     <IndexRoute component={WelcomeContainer} />
                     <Route component={EnsureAgreedToTermsContainer}>
