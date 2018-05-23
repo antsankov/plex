@@ -102,14 +102,14 @@ describe("<RequestLoanForm />", () => {
         it("should set principalTokenAmount", () => {
             const formData = {
                 loan: {
-                    principalAmount: new BigNumber(10),
+                    principalAmount: 10,
                     principalTokenSymbol: "REP",
                 },
             };
             wrapper.instance().handleChange(formData);
 
             const principalTokenAmount = new Types.TokenAmount({
-                amount: formData.loan.principalAmount,
+                amount: new BigNumber(formData.loan.principalAmount),
                 symbol: formData.loan.principalTokenSymbol,
                 type: Types.TokenAmountType.Decimal,
             });
@@ -129,11 +129,11 @@ describe("<RequestLoanForm />", () => {
         it("should set interestRate", () => {
             const formData = {
                 terms: {
-                    interestRate: new BigNumber(3.2),
+                    interestRate: 3.2,
                 },
             };
             wrapper.instance().handleChange(formData);
-            expect(spy).toHaveBeenCalledWith({ interestRate: formData.terms.interestRate });
+            expect(spy).toHaveBeenCalledWith({ interestRate: new BigNumber(formData.terms.interestRate) });
         });
     });
 
