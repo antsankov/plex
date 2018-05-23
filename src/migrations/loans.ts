@@ -10,6 +10,7 @@ const {
     TokenRegistry,
     DebtToken,
     SimpleInterestTermsContract,
+    CollateralizedSimpleInterestTermsContract,
 } = require("@dharmaprotocol/contracts");
 const promisify = require("tiny-promisify");
 const BigNumber = require("bignumber.js");
@@ -72,7 +73,8 @@ async function instantiateDharma() {
                 networkId in TokenRegistry.networks &&
                 networkId in DebtToken.networks &&
                 networkId in DebtRegistry.networks &&
-                networkId in SimpleInterestTermsContract.networks
+                networkId in SimpleInterestTermsContract.networks &&
+                networkId in CollateralizedSimpleInterestTermsContract.networks
             )
         ) {
             throw new Error("Unable to connect to the blockchain");
@@ -87,6 +89,8 @@ async function instantiateDharma() {
             debtRegistryAddress: DebtRegistry.networks[networkId].address,
             simpleInterestTermsContractAddress:
                 SimpleInterestTermsContract.networks[networkId].address,
+            collateralizedSimpleInterestTermsContractAddress:
+                CollateralizedSimpleInterestTermsContract.networks[networkId].address,
         };
 
         dharma = new Dharma(web3.currentProvider, dharmaConfig);
