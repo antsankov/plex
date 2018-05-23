@@ -100,7 +100,7 @@ class RequestLoanForm extends React.Component<Props, State> {
         });
 
         if (formData.loan) {
-            if (formData.loan.principalAmount && formData.loan.principalTokenSymbol) {
+            if (_.isNumber(formData.loan.principalAmount) && formData.loan.principalTokenSymbol) {
                 this.setState({
                     principalTokenAmount: new Types.TokenAmount({
                         amount: new BigNumber(formData.loan.principalAmount),
@@ -116,7 +116,7 @@ class RequestLoanForm extends React.Component<Props, State> {
         }
 
         if (formData.terms) {
-            if (formData.terms.interestRate) {
+            if (_.isNumber(formData.terms.interestRate)) {
                 this.setState({ interestRate: new BigNumber(formData.terms.interestRate) });
             }
 
@@ -124,13 +124,16 @@ class RequestLoanForm extends React.Component<Props, State> {
                 this.setState({ amortizationUnit: formData.terms.amortizationUnit });
             }
 
-            if (formData.terms.termLength) {
+            if (_.isNumber(formData.terms.termLength)) {
                 this.setState({ termLength: new BigNumber(formData.terms.termLength) });
             }
         }
 
         if (formData.collateral) {
-            if (formData.collateral.collateralAmount && formData.collateral.collateralTokenSymbol) {
+            if (
+                _.isNumber(formData.collateral.collateralAmount) &&
+                formData.collateral.collateralTokenSymbol
+            ) {
                 this.setState({
                     collateralTokenAmount: new Types.TokenAmount({
                         amount: new BigNumber(formData.collateral.collateralAmount),
