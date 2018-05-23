@@ -1,7 +1,7 @@
 require("dotenv").config();
 const ROOT_DIR = __dirname + "/../../../";
 const Web3 = require("web3");
-const Dharma = require("@dharmaprotocol/dharma.js");
+const { Dharma } = require("@dharmaprotocol/dharma.js");
 const {
     DebtRegistry,
     DebtKernel,
@@ -89,7 +89,7 @@ async function instantiateDharma() {
                 SimpleInterestTermsContract.networks[networkId].address,
         };
 
-        dharma = new Dharma.default(web3.currentProvider, dharmaConfig);
+        dharma = new Dharma(web3.currentProvider, dharmaConfig);
         await fillDebtOrders();
         await web3Utils.mineBlock();
         log("Increasing blockchain time by 3 hours");
