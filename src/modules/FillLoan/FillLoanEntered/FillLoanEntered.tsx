@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link, browserHistory } from "react-router";
 import { ClipLoader } from "react-spinners";
+import * as _ from "lodash";
 
 import { amortizationUnitToFrequency, debtOrderFromJSON } from "../../../utils";
 import { PaperLayout } from "../../../layouts";
@@ -12,7 +13,7 @@ import {
     Bold,
 } from "../../../components";
 import { SuccessModal } from "./SuccessModal";
-import { Col } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import {
     LoanInfoContainer,
     HalfCol,
@@ -61,12 +62,13 @@ interface States {
     debtEntity?: OpenCollateralizedDebtEntity;
     description: string;
     gracePeriodInDays?: BigNumber;
+    initializing: boolean;
     interestRate: BigNumber;
     issuanceHash: string;
+    missingParameters?: string[];
     principalTokenAmount?: Types.TokenAmount;
     successModal: boolean;
     termLength: BigNumber;
-    initializing: boolean;
 }
 
 class FillLoanEntered extends React.Component<Props, States> {
@@ -74,15 +76,15 @@ class FillLoanEntered extends React.Component<Props, States> {
         super(props);
 
         this.state = {
-            confirmationModal: false,
-            successModal: false,
-            awaitingTransaction: false,
-            description: "",
-            interestRate: new BigNumber(0),
-            termLength: new BigNumber(0),
             amortizationUnit: "",
-            issuanceHash: "",
+            awaitingTransaction: false,
+            confirmationModal: false,
+            description: "",
             initializing: true,
+            interestRate: new BigNumber(0),
+            issuanceHash: "",
+            successModal: false,
+            termLength: new BigNumber(0),
         };
         this.confirmationModalToggle = this.confirmationModalToggle.bind(this);
         this.successModalToggle = this.successModalToggle.bind(this);
@@ -107,9 +109,16 @@ class FillLoanEntered extends React.Component<Props, States> {
                 return;
             }
 
-            const debtEntity: OpenCollateralizedDebtEntity = debtOrderFromJSON(
-                JSON.stringify(urlParams),
+            const debtEntity: OpenCollateralizedDebtEntity = new OpenCollateralizedDebtEntity(
+                debtOrderFromJSON(JSON.stringify(urlParams)),
             );
+
+            const missingParameters = debtEntity.getMissingParameters();
+
+            if (missingParameters.length > 0) {
+                this.setState({ initializing: false, missingParameters });
+                return;
+            }
 
             // TODO: Improve parsing of debtOrderInstance
             let { description, principalTokenSymbol, ...filteredUrlParams } = urlParams;
@@ -258,18 +267,36 @@ class FillLoanEntered extends React.Component<Props, States> {
 
     render() {
         const {
+            amortizationUnit,
             collateralTokenAmount,
             description,
             gracePeriodInDays,
-            interestRate,
-            termLength,
-            amortizationUnit,
-            principalTokenAmount,
-            issuanceHash,
             initializing,
+            interestRate,
+            issuanceHash,
+            missingParameters,
+            principalTokenAmount,
+            termLength,
         } = this.state;
 
-        if (initializing || !principalTokenAmount || !collateralTokenAmount) {
+        if (missingParameters) {
+            const missingParametersList = missingParameters.map((missingParameter) => (
+                <Row key={missingParameter}>{_.startCase(missingParameter)}</Row>
+            ));
+
+            return (
+                <PaperLayout>
+                    <MainWrapper>
+                        <Header title={"Fill a Loan"} />
+                        <Row>The following parameters are missing from your URL:</Row>
+                        <br />
+                        {missingParametersList}
+                        <br />
+                        <Row>Please verify the link sent to you by the loan requester.</Row>
+                    </MainWrapper>
+                </PaperLayout>
+            );
+        } else if (initializing || !principalTokenAmount || !collateralTokenAmount) {
             return (
                 <PaperLayout>
                     <MainWrapper>
@@ -278,114 +305,114 @@ class FillLoanEntered extends React.Component<Props, States> {
                     </MainWrapper>
                 </PaperLayout>
             );
-        } else {
-            const leftInfoItems = [
-                {
-                    title: "Principal",
-                    content: principalTokenAmount.toString(),
-                },
-                {
-                    title: "Term Length",
-                    content:
-                        termLength && amortizationUnit
-                            ? termLength.toNumber() + " " + amortizationUnit
-                            : "-",
-                },
-            ];
-            const rightInfoItems = [
-                { title: "Interest Rate", content: interestRate.toNumber() + "%" },
-                {
-                    title: "Installment Frequency",
-                    content: amortizationUnit ? amortizationUnitToFrequency(amortizationUnit) : "-",
-                },
-            ];
-
-            if (collateralTokenAmount && gracePeriodInDays != null) {
-                leftInfoItems.push({
-                    title: "Collateral",
-                    content: collateralTokenAmount.toString(),
-                });
-                rightInfoItems.push({
-                    title: "Grace period",
-                    content: `${gracePeriodInDays.toNumber()} days`,
-                });
-            }
-
-            const leftInfoItemRows = leftInfoItems.map((item) => (
-                <InfoItem key={item.title}>
-                    <Title>{item.title}</Title>
-                    <Content>{item.content}</Content>
-                </InfoItem>
-            ));
-            const rightInfoItemRows = rightInfoItems.map((item) => (
-                <InfoItem key={item.title}>
-                    <Title>{item.title}</Title>
-                    <Content>{item.content}</Content>
-                </InfoItem>
-            ));
-
-            const descriptionContent = (
-                <span>
-                    Here are the details of loan request <Bold>{issuanceHash}</Bold>. If the terms
-                    look fair to you, fill the loan and your transaction will be completed.
-                </span>
-            );
-            return (
-                <PaperLayout>
-                    <MainWrapper>
-                        <Header title={"Fill a Loan"} description={descriptionContent} />
-                        <LoanInfoContainer>
-                            <HalfCol>{leftInfoItemRows}</HalfCol>
-                            <HalfCol>{rightInfoItemRows}</HalfCol>
-                            <Col xs="12">
-                                <InfoItem>
-                                    <Title>Description</Title>
-                                    <Content>{description}</Content>
-                                </InfoItem>
-                            </Col>
-                        </LoanInfoContainer>
-                        <ButtonContainer>
-                            <Link to="/fill">
-                                <DeclineButton>Decline</DeclineButton>
-                            </Link>
-                            <FillLoanButton
-                                onClick={this.confirmationModalToggle}
-                                disabled={this.state.awaitingTransaction}
-                            >
-                                Fill Loan
-                            </FillLoanButton>
-                        </ButtonContainer>
-
-                        {this.state.awaitingTransaction && (
-                            <Content style={{ textAlign: "center" }}>
-                                <LoaderContainer>
-                                    <ClipLoader size={18} color={"#1cc1cc"} loading={true} />
-                                </LoaderContainer>
-                            </Content>
-                        )}
-
-                        <ConfirmOpenLoanModal
-                            amortizationUnit={amortizationUnit}
-                            awaitingTransaction={this.state.awaitingTransaction}
-                            collateralTokenAmount={collateralTokenAmount}
-                            interestRate={interestRate}
-                            modalOpen={this.state.confirmationModal}
-                            modalType={ConfirmOpenLoanModalType.Creditor}
-                            onConfirm={this.handleFillOrder}
-                            onToggle={this.confirmationModalToggle}
-                            principalTokenAmount={principalTokenAmount}
-                            termLength={termLength}
-                        />
-                        <SuccessModal
-                            modal={this.state.successModal}
-                            onToggle={this.successModalToggle}
-                            issuanceHash={issuanceHash}
-                            onRedirect={this.handleRedirect}
-                        />
-                    </MainWrapper>
-                </PaperLayout>
-            );
         }
+
+        const leftInfoItems = [
+            {
+                title: "Principal",
+                content: principalTokenAmount.toString(),
+            },
+            {
+                title: "Term Length",
+                content:
+                    termLength && amortizationUnit
+                        ? termLength.toNumber() + " " + amortizationUnit
+                        : "-",
+            },
+        ];
+        const rightInfoItems = [
+            { title: "Interest Rate", content: interestRate.toNumber() + "%" },
+            {
+                title: "Installment Frequency",
+                content: amortizationUnit ? amortizationUnitToFrequency(amortizationUnit) : "-",
+            },
+        ];
+
+        if (collateralTokenAmount && gracePeriodInDays != null) {
+            leftInfoItems.push({
+                title: "Collateral",
+                content: collateralTokenAmount.toString(),
+            });
+            rightInfoItems.push({
+                title: "Grace period",
+                content: `${gracePeriodInDays.toNumber()} days`,
+            });
+        }
+
+        const leftInfoItemRows = leftInfoItems.map((item) => (
+            <InfoItem key={item.title}>
+                <Title>{item.title}</Title>
+                <Content>{item.content}</Content>
+            </InfoItem>
+        ));
+        const rightInfoItemRows = rightInfoItems.map((item) => (
+            <InfoItem key={item.title}>
+                <Title>{item.title}</Title>
+                <Content>{item.content}</Content>
+            </InfoItem>
+        ));
+
+        const descriptionContent = (
+            <span>
+                Here are the details of loan request <Bold>{issuanceHash}</Bold>. If the terms look
+                fair to you, fill the loan and your transaction will be completed.
+            </span>
+        );
+        return (
+            <PaperLayout>
+                <MainWrapper>
+                    <Header title={"Fill a Loan"} description={descriptionContent} />
+                    <LoanInfoContainer>
+                        <HalfCol>{leftInfoItemRows}</HalfCol>
+                        <HalfCol>{rightInfoItemRows}</HalfCol>
+                        <Col xs="12">
+                            <InfoItem>
+                                <Title>Description</Title>
+                                <Content>{description}</Content>
+                            </InfoItem>
+                        </Col>
+                    </LoanInfoContainer>
+                    <ButtonContainer>
+                        <Link to="/fill">
+                            <DeclineButton>Decline</DeclineButton>
+                        </Link>
+                        <FillLoanButton
+                            onClick={this.confirmationModalToggle}
+                            disabled={this.state.awaitingTransaction}
+                        >
+                            Fill Loan
+                        </FillLoanButton>
+                    </ButtonContainer>
+
+                    {this.state.awaitingTransaction && (
+                        <Content style={{ textAlign: "center" }}>
+                            <LoaderContainer>
+                                <ClipLoader size={18} color={"#1cc1cc"} loading={true} />
+                            </LoaderContainer>
+                        </Content>
+                    )}
+
+                    <ConfirmOpenLoanModal
+                        amortizationUnit={amortizationUnit}
+                        awaitingTransaction={this.state.awaitingTransaction}
+                        collateralTokenAmount={collateralTokenAmount}
+                        interestRate={interestRate}
+                        modalOpen={this.state.confirmationModal}
+                        modalType={ConfirmOpenLoanModalType.Creditor}
+                        onConfirm={this.handleFillOrder}
+                        onToggle={this.confirmationModalToggle}
+                        principalTokenAmount={principalTokenAmount}
+                        termLength={termLength}
+                    />
+                    <SuccessModal
+                        modal={this.state.successModal}
+                        onToggle={this.successModalToggle}
+                        issuanceHash={issuanceHash}
+                        onRedirect={this.handleRedirect}
+                    />
+                </MainWrapper>
+            </PaperLayout>
+        );
     }
 }
 
