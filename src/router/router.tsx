@@ -1,7 +1,6 @@
 // External Libraries
 import * as React from "react";
 import * as _ from "lodash";
-import * as ReactGA from "react-ga";
 import * as Web3 from "web3";
 import { Dharma } from "@dharmaprotocol/dharma.js";
 import { BigNumber } from "bignumber.js";
@@ -41,6 +40,9 @@ import { setError } from "../components/Toast/actions";
 // Common
 import { web3Errors } from "../common/web3Errors";
 import { ETH_GAS_STATION_API_URL, SUPPORTED_NETWORK_IDS } from "../common/constants";
+
+// Utils
+import { Analytics } from "../utils";
 
 interface Props {
     store: any;
@@ -171,7 +173,7 @@ class AppRouter extends React.Component<Props, {}> {
     }
 
     trackPageView() {
-        ReactGA.pageview(window.location.pathname);
+        Analytics.page(window.location.pathname);
     }
 
     render() {

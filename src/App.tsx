@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PageLayout } from "./layouts";
 import * as Web3 from "web3";
-import * as ReactGA from "react-ga";
 
 const Intercom = require("react-intercom").default;
 const promisify = require("tiny-promisify");
@@ -14,9 +13,6 @@ interface Props {
 interface State {
     intervalId: any;
 }
-
-// Initialize Google Analytics
-ReactGA.initialize("UA-98616406-4");
 
 class App extends React.Component<Props, State> {
     constructor(props: Props) {

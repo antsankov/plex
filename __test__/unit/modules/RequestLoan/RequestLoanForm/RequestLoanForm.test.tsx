@@ -96,7 +96,7 @@ describe("<RequestLoanForm />", () => {
         it("should set formData", () => {
             const formData = {};
             wrapper.instance().handleChange(formData);
-            expect(spy).toHaveBeenCalledWith({ formData });
+            expect(spy).toHaveBeenCalledWith({ formBegun: true, formData });
         });
 
         it("should set principalTokenAmount", () => {

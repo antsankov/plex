@@ -5,7 +5,7 @@ import { Header, ScrollToTopOnMount, MainWrapper } from "../../../components";
 import { ShareRequestURL } from "./ShareRequestURL";
 import { RequestLoanSummary } from "./RequestLoanSummary";
 import { DebtEntity, OpenCollateralizedDebtEntity } from "../../../models";
-import { generateDebtQueryParams } from "../../../utils";
+import { Analytics, generateDebtQueryParams } from "../../../utils";
 
 interface RequestLoanSuccessProps {
     debtEntity: OpenCollateralizedDebtEntity;
@@ -34,6 +34,11 @@ class RequestLoanSuccess extends React.Component<RequestLoanSuccessProps, States
     }
 
     componentDidMount() {
+        Analytics.track(Analytics.RequestLoanAction.ViewConfirmation, {
+            category: Analytics.Category.RequestLoan,
+            nonInteraction: 1,
+        });
+
         const { debtEntity } = this.props;
 
         if (!debtEntity) {

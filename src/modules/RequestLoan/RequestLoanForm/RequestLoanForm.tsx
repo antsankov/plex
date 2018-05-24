@@ -32,7 +32,7 @@ import {
 import { RequestLoanDescription } from "./RequestLoanDescription";
 
 // Utils
-import { generateDebtQueryParams } from "../../../utils";
+import { Analytics, generateDebtQueryParams } from "../../../utils";
 
 // Validators
 import { validateTermLength, validateInterestRate, validateCollateral } from "./validator";
@@ -57,6 +57,7 @@ interface RequiredState {
     awaitingSignTx: boolean;
     confirmationModal: boolean;
     description: string;
+    formBegun: boolean;
     formData: any;
     gracePeriodInDays: BigNumber;
     issuanceHash: string;
@@ -74,12 +75,13 @@ interface State extends RequiredState {
 
 class RequestLoanForm extends React.Component<Props, State> {
     private defaultState: RequiredState = {
-        formData: {},
-        description: "",
-        issuanceHash: "",
-        confirmationModal: false,
         awaitingSignTx: false,
+        confirmationModal: false,
+        description: "",
+        formBegun: false,
+        formData: {},
         gracePeriodInDays: new BigNumber(0),
+        issuanceHash: "",
     };
 
     constructor(props: Props) {
@@ -94,8 +96,22 @@ class RequestLoanForm extends React.Component<Props, State> {
         this.state = this.defaultState;
     }
 
+    componentDidMount() {
+        Analytics.track(Analytics.RequestLoanAction.ViewForm, {
+            category: Analytics.Category.RequestLoan,
+            nonInteraction: 1,
+        });
+    }
+
     handleChange(formData: any) {
+        if (!this.state.formBegun) {
+            Analytics.track(Analytics.RequestLoanAction.BeginForm, {
+                category: Analytics.Category.RequestLoan,
+            });
+        }
+
         this.setState({
+            formBegun: true,
             formData: formData,
         });
 
@@ -168,6 +184,10 @@ class RequestLoanForm extends React.Component<Props, State> {
         } = this.state;
 
         try {
+            Analytics.track(Analytics.RequestLoanAction.SubmitForm, {
+                category: Analytics.Category.RequestLoan,
+            });
+
             handleSetError("");
 
             if (!this.props.dharma) {
@@ -216,6 +236,10 @@ class RequestLoanForm extends React.Component<Props, State> {
         const { handleSetError, updateDebtEntity, shortenUrl, setPendingDebtEntity } = this.props;
 
         try {
+            Analytics.track(Analytics.RequestLoanAction.ConfirmRequest, {
+                category: Analytics.Category.RequestLoan,
+            });
+
             handleSetError("");
 
             if (!debtOrderInstance) {
