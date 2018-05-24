@@ -47,6 +47,7 @@ describe('<FillLoanEntered />', () => {
 		web3 = new MockWeb3();
 		dharma = new MockDharma();
 		query = {
+			amortizationUnit: "months",
 			collateralAmount: 10,
 			collateralToken: "0x07e93e27ac8a1c114f1931f65e3c8b5186b9b77e",
 			collateralTokenSymbol: 'MKR',
@@ -60,6 +61,7 @@ describe('<FillLoanEntered />', () => {
 			expirationTimestampInSec: 1524613355,
 			gracePeriodInDays: 1,
 			interestRate: 5,
+			issuanceHash: '0x3d8e76d2022e017c6c276b44cb2e4c71bd3cc3df',
 			issuanceVersion: '0x1d8e76d2022e017c6c276b44cb2e4c71bd3cc3de',
 			kernelVersion: '0x89c5b853e9e32bf47c7da1ccb02e981b74c47f2f',
 			principalAmount: 10,
