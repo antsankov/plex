@@ -125,9 +125,13 @@ class ActiveDebtOrder extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+        const { debtEntity } = this.props;
+
         this.retrieveTokenDecimals();
-        // Calculate which payments have been missed, so as to display that in the repayment schedule.
-        this.calculatePaymentsMissed();
+        if (debtEntity instanceof FilledDebtEntity) {
+            // Calculate which payments have been missed, so as to display that in the repayment schedule.
+            this.calculatePaymentsMissed();
+        }
     }
 
     toggleDrawer() {
@@ -475,7 +479,7 @@ class ActiveDebtOrder extends React.Component<Props, State> {
         const identiconImgSrc = getIdenticonImgSrc(debtEntity.issuanceHash, 60, 0.1);
         const detailLink =
             debtEntity instanceof OpenDebtEntity ? (
-                <DetailLink to={`/request/success/${debtEntity.issuanceHash}`}>
+                <DetailLink to={`/request/success/?issuanceHash=${debtEntity.issuanceHash}`}>
                     {shortenString(debtEntity.issuanceHash)}
                 </DetailLink>
             ) : (
@@ -591,7 +595,9 @@ class ActiveDebtOrder extends React.Component<Props, State> {
                             <CancelButton onClick={this.handleCancelDebtEntityClick}>
                                 Cancel
                             </CancelButton>
-                            <ShareButton to={`/request/success/${debtEntity.issuanceHash}`}>
+                            <ShareButton
+                                to={`/request/success/?issuanceHash=${debtEntity.issuanceHash}`}
+                            >
                                 Share
                             </ShareButton>
                         </PendingActionContainer>

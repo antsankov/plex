@@ -132,22 +132,6 @@ describe("<ActiveInvestment />", () => {
                 ).toEqual(props.investment.principalTokenSymbol);
             });
 
-            it("should render correct <DetailLink />", () => {
-                expect(detailContainer.find(Url).find(DetailLink).length).toEqual(1);
-                expect(
-                    detailContainer
-                        .find(Url)
-                        .find(DetailLink)
-                        .prop("to"),
-                ).toEqual("/request/success/" + props.investment.issuanceHash);
-                expect(
-                    detailContainer
-                        .find(Url)
-                        .find(DetailLink)
-                        .get(0).props.children,
-                ).toEqual(shortenString(props.investment.issuanceHash));
-            });
-
             it("should render <StatusActive /> if active", () => {
                 expect(detailContainer.find(StatusActive).length).toEqual(1);
             });

@@ -32,7 +32,7 @@ import {
 import { RequestLoanDescription } from "./RequestLoanDescription";
 
 // Utils
-import { encodeUrlParams, generateDebtQueryParams } from "../../../utils";
+import { generateDebtQueryParams } from "../../../utils";
 
 // Validators
 import { validateTermLength, validateInterestRate, validateCollateral } from "./validator";
@@ -284,14 +284,11 @@ class RequestLoanForm extends React.Component<Props, State> {
             fillLoanShortUrl = await shortenUrl(hostname, "/fill/loan", debtQueryParams);
 
             debtEntity.fillLoanShortUrl = fillLoanShortUrl;
-            const debtQueryParamsWithShortenedLink = generateDebtQueryParams(debtEntity);
 
             updateDebtEntity(debtEntity);
             setPendingDebtEntity(debtEntity.issuanceHash);
 
-            browserHistory.push(
-                `/request/success/?${encodeUrlParams(debtQueryParamsWithShortenedLink)}`,
-            );
+            browserHistory.push(`/request/success/?issuanceHash=${debtEntity.issuanceHash}`);
         } catch (e) {
             if (e.message.includes("User denied message signature")) {
                 handleSetError("Wallet has denied message signature.");

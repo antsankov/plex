@@ -5,7 +5,7 @@ import { Header, ScrollToTopOnMount, MainWrapper } from "../../../components";
 import { ShareRequestURL } from "./ShareRequestURL";
 import { RequestLoanSummary } from "./RequestLoanSummary";
 import { DebtEntity, OpenCollateralizedDebtEntity } from "../../../models";
-import { debtOrderFromJSON } from "../../../utils";
+import { generateDebtQueryParams } from "../../../utils";
 
 interface RequestLoanSuccessProps {
     debtEntity: OpenCollateralizedDebtEntity;
@@ -19,6 +19,7 @@ interface RequestLoanSuccessProps {
 
 interface States {
     email: string;
+    urlParams?: any;
 }
 
 class RequestLoanSuccess extends React.Component<RequestLoanSuccessProps, States> {
@@ -32,24 +33,16 @@ class RequestLoanSuccess extends React.Component<RequestLoanSuccessProps, States
         this.handleShareSocial = this.handleShareSocial.bind(this);
     }
 
-    async componentDidMount() {
-        // In the case that this page is navigated to directly, the loan order will not
-        // yet be loaded in the redux store.  In that case, we should pull the loan order
-        // from dharma.js.
+    componentDidMount() {
+        const { debtEntity } = this.props;
 
-        if (!this.props.debtEntity && this.props.location) {
-            const urlParams = this.props.location.query;
-            if (!urlParams) {
-                return;
-            }
-
-            const debtEntity: OpenCollateralizedDebtEntity = debtOrderFromJSON(
-                JSON.stringify(urlParams),
-            );
-
-            this.props.updateDebtEntity(debtEntity);
-            this.props.setPendingDebtEntity(debtEntity.issuanceHash);
+        if (!debtEntity) {
+            return;
         }
+
+        const urlParams = generateDebtQueryParams(debtEntity);
+
+        this.setState({ urlParams });
     }
 
     handleEmailChange(email: string) {
@@ -103,7 +96,7 @@ class RequestLoanSuccess extends React.Component<RequestLoanSuccessProps, States
 
     render() {
         let { debtEntity, dharma } = this.props;
-        const urlParams = this.props.location.query;
+        const { urlParams } = this.state;
 
         if (!debtEntity) {
             return null;

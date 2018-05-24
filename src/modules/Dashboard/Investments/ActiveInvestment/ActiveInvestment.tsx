@@ -20,7 +20,6 @@ import { InvestmentEntity, TokenEntity } from "../../../../models";
 import {
     Amount,
     DetailContainer,
-    DetailLink,
     Drawer,
     IdenticonImage,
     ImageContainer,
@@ -324,11 +323,7 @@ class ActiveInvestment extends React.Component<Props, State> {
                                         tokenSymbol={investment.principalTokenSymbol}
                                     />
                                 </Amount>
-                                <Url>
-                                    <DetailLink to={`/request/success/${investment.issuanceHash}`}>
-                                        {shortenString(investment.issuanceHash)}
-                                    </DetailLink>
-                                </Url>
+                                <Url>{shortenString(investment.issuanceHash)}</Url>
                             </Col>
                             <Col xs="6" md="6">
                                 {investment.collateralSeizable && (

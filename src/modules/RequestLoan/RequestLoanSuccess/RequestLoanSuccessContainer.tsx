@@ -1,11 +1,16 @@
 import { connect } from "react-redux";
 import { Dharma } from "@dharmaprotocol/dharma.js";
+import * as queryString from "query-string";
+
 import { RequestLoanSuccess } from "./RequestLoanSuccess";
 import { setPendingDebtEntity, updateDebtEntity } from "../../../actions/debtEntityActions";
 import { DebtEntity } from "../../../models";
 
 const mapStateToProps = (state: any) => {
-    const debtEntity: DebtEntity = state.debtEntityReducer.singleDebtEntity;
+    const queryParams = queryString.parse(location.search);
+    const issuanceHash = queryParams.issuanceHash;
+
+    const debtEntity: DebtEntity = state.debtEntityReducer.debtEntities.get(issuanceHash);
 
     return {
         debtEntity,

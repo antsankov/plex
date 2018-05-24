@@ -303,7 +303,7 @@ describe("<ActiveDebtOrder />", () => {
                             .find(Url)
                             .find(DetailLink)
                             .prop("to"),
-                    ).toEqual("/request/success/" + props.debtEntity.issuanceHash);
+                    ).toEqual("/request/success/?issuanceHash=" + props.debtEntity.issuanceHash);
                     expect(
                         detailContainer
                             .find(Url)

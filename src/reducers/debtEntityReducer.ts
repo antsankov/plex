@@ -5,7 +5,6 @@ class DebtEntityReducerState {
     debtEntities: Map<string, DebtEntity>;
     filledDebtEntityIssuanceHashes: string[];
     pendingDebtEntityIssuanceHashes: string[];
-    singleDebtEntity?: DebtEntity;
 
     constructor() {
         this.debtEntities = new Map<string, DebtEntity>();
@@ -15,8 +14,6 @@ class DebtEntityReducerState {
 }
 
 const handleSetPendingDebtEntity = (state: DebtEntityReducerState, payload: string) => {
-    const pendingDebtEntity = state.debtEntities.get(payload);
-
     const { pendingDebtEntityIssuanceHashes } = state;
 
     if (!pendingDebtEntityIssuanceHashes.find((issuanceHash) => issuanceHash === payload)) {
@@ -26,7 +23,6 @@ const handleSetPendingDebtEntity = (state: DebtEntityReducerState, payload: stri
     return {
         ...state,
         pendingDebtEntityIssuanceHashes,
-        singleDebtEntity: pendingDebtEntity,
     };
 };
 
