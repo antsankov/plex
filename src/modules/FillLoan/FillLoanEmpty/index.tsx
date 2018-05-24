@@ -3,7 +3,7 @@ import { Header, MainWrapper, JSONSchemaForm } from "../../../components";
 import { schema, uiSchema, validDebtOrderSchema } from "./schema";
 import { PaperLayout } from "../../../layouts";
 import { Instructions, Title, StyledLink } from "./styledComponents";
-import { encodeUrlParams, debtOrderFromJSON } from "../../../utils";
+import { Analytics, debtOrderFromJSON, encodeUrlParams } from "../../../utils";
 import { browserHistory } from "react-router";
 
 interface State {
@@ -19,6 +19,11 @@ class FillLoanEmpty extends React.Component<{}, State> {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.validateForm = this.validateForm.bind(this);
+
+        Analytics.track(Analytics.FillLoanAction.ViewForm, {
+            category: Analytics.Category.FillLoan,
+            nonInteraction: 1,
+        });
     }
 
     handleChange(formData: any) {
@@ -30,21 +35,39 @@ class FillLoanEmpty extends React.Component<{}, State> {
         if (!loanRequest) {
             return;
         }
+
+        Analytics.track(Analytics.FillLoanAction.SubmitJson, {
+            category: Analytics.Category.FillLoan,
+        });
+
         loanRequest = JSON.parse(loanRequest);
         browserHistory.push(`/fill/loan?${encodeUrlParams(loanRequest)}`);
     }
 
     validateForm(formData: any, errors: any) {
+        let errorFound = false;
+
         try {
             const loanRequest = debtOrderFromJSON(formData.loan.loanRequest);
             for (let field of validDebtOrderSchema.required) {
                 if (!loanRequest.hasOwnProperty(field)) {
                     errors.loan.loanRequest.addError(`JSON string is missing ${field} key.`);
+
+                    errorFound = true;
                 }
             }
         } catch (e) {
             errors.loan.loanRequest.addError("Invalid JSON string.");
+
+            errorFound = true;
         }
+
+        if (errorFound) {
+            Analytics.track(Analytics.FillLoanAction.JsonError, {
+                category: Analytics.Category.FillLoan,
+            });
+        }
+
         return errors;
     }
 

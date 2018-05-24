@@ -1,4 +1,14 @@
 export namespace Analytics {
+    export enum FillLoanAction {
+        ViewForm = "View Form",
+        SubmitJson = "Submit JSON",
+        JsonError = "JSON Error",
+        ViewLoanDetails = "View Loan Details",
+        FillLoan = "Fill Loan",
+        ConfirmFill = "Confirm Fill",
+        ClickDone = "Click Done",
+    }
+
     export enum RequestLoanAction {
         ViewForm = "View Form",
         BeginForm = "Begin Form",
@@ -8,9 +18,10 @@ export namespace Analytics {
     }
 
     // The union of all Action enums
-    type Action = RequestLoanAction;
+    type Action = FillLoanAction | RequestLoanAction;
 
     export enum Category {
+        FillLoan = "Fill Loan",
         RequestLoan = "Request Loan",
     }
 

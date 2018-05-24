@@ -3,7 +3,7 @@ import { Link, browserHistory } from "react-router";
 import { ClipLoader } from "react-spinners";
 import * as _ from "lodash";
 
-import { amortizationUnitToFrequency, debtOrderFromJSON } from "../../../utils";
+import { amortizationUnitToFrequency, Analytics, debtOrderFromJSON } from "../../../utils";
 import { PaperLayout } from "../../../layouts";
 import {
     Header,
@@ -94,6 +94,11 @@ class FillLoanEntered extends React.Component<Props, States> {
 
     async componentDidMount() {
         this.getDebtEntityDetail(this.props.dharma);
+
+        Analytics.track(Analytics.FillLoanAction.ViewLoanDetails, {
+            category: Analytics.Category.FillLoan,
+            nonInteraction: 1,
+        });
     }
 
     componentDidUpdate(prevProps: Props) {
@@ -161,13 +166,25 @@ class FillLoanEntered extends React.Component<Props, States> {
     }
 
     confirmationModalToggle() {
+        const confirmationModalOpen = this.state.confirmationModal;
+
+        if (!confirmationModalOpen) {
+            Analytics.track(Analytics.FillLoanAction.FillLoan, {
+                category: Analytics.Category.FillLoan,
+            });
+        }
+
         this.setState({
-            confirmationModal: !this.state.confirmationModal,
+            confirmationModal: !confirmationModalOpen,
         });
     }
 
     async handleFillOrder() {
         const { recommendedGasPrice } = this.props;
+
+        Analytics.track(Analytics.FillLoanAction.ConfirmFill, {
+            category: Analytics.Category.FillLoan,
+        });
 
         try {
             this.props.handleSetError("");
@@ -262,6 +279,10 @@ class FillLoanEntered extends React.Component<Props, States> {
     }
 
     handleRedirect() {
+        Analytics.track(Analytics.FillLoanAction.ClickDone, {
+            category: Analytics.Category.FillLoan,
+        });
+
         browserHistory.push("/dashboard");
     }
 
