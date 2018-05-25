@@ -34,6 +34,7 @@ import {
     setAccounts,
     setNetworkId,
     setRecommendedGasPrice,
+    nonWeb3EnabledBrowserDetected,
 } from "./actions";
 import { setError } from "../components/Toast/actions";
 
@@ -58,8 +59,17 @@ class AppRouter extends React.Component<Props, {}> {
         const { store, env } = this.props;
         const dispatch = store.dispatch;
 
+        let web3: Web3;
+
         try {
-            const web3 = await this.connectToWeb3(env);
+            web3 = await this.instantiateWeb3(env);
+        } catch {
+            dispatch(nonWeb3EnabledBrowserDetected);
+            return;
+        }
+
+        try {
+            this.validateConnection(web3);
             dispatch(web3Connected(web3));
 
             const networkID = await this.getNetworkID(web3);
@@ -79,17 +89,15 @@ class AppRouter extends React.Component<Props, {}> {
     }
 
     /**
-     * Asynchronously instantiates a new web3 instance and ensures that a valid connection is
-     * present; throws otherwise.
+     * Asynchronously instantiates a new web3 instance; throws otherwise.
      *
      * @async
      * @param  {string}  env the node environment as specified in the process running the app.
      *
-     * @return {Promise<Web3>}     web3 instance that is actively connected to an Ethereum node.
+     * @return {Promise<Web3>} web3 instance.
      * @throws {UNABLE_TO_FIND_WEB3_PROVIDER} error in the case where no web3 provider is found.
-     * @throws {UNABLE_TO_CONNECT_TO_NETWORK} error in the case where an active connection is not made.
      */
-    async connectToWeb3(env: string): Promise<Web3> {
+    async instantiateWeb3(env: string): Promise<Web3> {
         let web3: Web3;
 
         if (typeof (window as any).web3 !== "undefined") {
@@ -100,9 +108,17 @@ class AppRouter extends React.Component<Props, {}> {
             throw new Error(web3Errors.UNABLE_TO_FIND_WEB3_PROVIDER);
         }
 
-        if (web3.isConnected()) {
-            return web3;
-        } else {
+        return web3;
+    }
+
+    /**
+     * Ensures that a valid connection to the Ethereum network is present; throws otherwise.
+     *
+     * @param  {Web3}  web3 the relevant web3 instance.
+     * @throws {UNABLE_TO_CONNECT_TO_NETWORK} error thrown when an active connection is not present.
+     */
+    validateConnection(web3: Web3) {
+        if (!web3.isConnected()) {
             throw new Error(web3Errors.UNABLE_TO_CONNECT_TO_NETWORK);
         }
     }
