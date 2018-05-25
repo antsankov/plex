@@ -3,7 +3,9 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
 import { A } from "../../components/StyledComponents";
 
-interface Props {}
+interface Props {
+    showWeb3BrowserModal: boolean;
+}
 
 interface State {
     showModal: boolean;
@@ -16,6 +18,18 @@ class MobileModal extends React.Component<Props, State> {
         this.state = {
             showModal: false,
         };
+    }
+
+    componentDidMount() {
+        if (this.props.showWeb3BrowserModal) {
+            this.setState({ showModal: true });
+        }
+    }
+
+    componentWillReceiveProps(nextProps: Props) {
+        if (nextProps.showWeb3BrowserModal) {
+            this.setState({ showModal: true });
+        }
     }
 
     toggle() {
