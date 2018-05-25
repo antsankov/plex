@@ -1,6 +1,12 @@
 import { actionsEnums } from "../common/actionsEnums";
 import { BigNumber } from "bignumber.js";
 
+export const nonWeb3EnabledBrowserDetected = () => {
+    return {
+        type: actionsEnums.NON_WEB3_ENABLED_BROWSER_DETECTED,
+    };
+};
+
 export const web3Connected = (web3: any) => {
     return {
         type: actionsEnums.WEB3_CONNECTED,
