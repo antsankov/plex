@@ -33,6 +33,7 @@ import { OpenCollateralizedDebtEntity, TokenEntity } from "../../../models";
 import { web3Errors } from "src/common/web3Errors";
 import { BLOCKCHAIN_API } from "../../../common/constants";
 import { BarLoader } from "react-spinners";
+import { CollateralizedSimpleInterestTermsContractParameters } from "@dharmaprotocol/dharma.js/dist/types/src/adapters/collateralized_simple_interest_loan_adapter";
 
 const ERROR_MESSAGE_MAPPING = {
     "User denied transaction signature": "Wallet has denied transaction.",
@@ -108,61 +109,81 @@ class FillLoanEntered extends React.Component<Props, States> {
     }
 
     async getDebtEntityDetail(dharma: Dharma) {
-        try {
-            const urlParams = this.props.location.query;
-            if (!dharma || !urlParams) {
-                return;
-            }
+        const urlParams = this.props.location.query;
 
-            const debtEntity: OpenCollateralizedDebtEntity = new OpenCollateralizedDebtEntity(
-                debtOrderFromJSON(JSON.stringify(urlParams)),
-            );
-
-            const missingParameters = debtEntity.getMissingParameters();
-
-            if (missingParameters.length > 0) {
-                this.setState({ initializing: false, missingParameters });
-                return;
-            }
-
-            // TODO: Improve parsing of debtOrderInstance
-            let { description, principalTokenSymbol, ...filteredUrlParams } = urlParams;
-
-            description = description ? description : "";
-
-            const debtOrderInstance: Types.DebtOrder = debtOrderFromJSON(
-                JSON.stringify(filteredUrlParams),
-            );
-
-            debtEntity.dharmaOrder = debtOrderInstance;
-
-            const principalTokenAmount = new Types.TokenAmount({
-                symbol: principalTokenSymbol,
-                amount: new BigNumber(debtEntity.principalAmount),
-                type: Types.TokenAmountType.Raw,
-            });
-
-            const collateralTokenAmount = new Types.TokenAmount({
-                symbol: debtEntity.collateralTokenSymbol,
-                amount: new BigNumber(debtEntity.collateralAmount),
-                type: Types.TokenAmountType.Raw,
-            });
-
-            this.setState({
-                amortizationUnit: debtEntity.amortizationUnit,
-                collateralTokenAmount,
-                debtEntity,
-                description,
-                gracePeriodInDays: debtEntity.gracePeriodInDays,
-                initializing: false,
-                interestRate: debtEntity.interestRate,
-                issuanceHash: debtEntity.issuanceHash,
-                principalTokenAmount,
-                termLength: debtEntity.termLength,
-            });
-        } catch (e) {
-            console.log(e);
+        if (!dharma || !urlParams) {
+            return;
         }
+
+        const description = urlParams.description || "";
+
+        const debtEntity: OpenCollateralizedDebtEntity = new OpenCollateralizedDebtEntity(
+            debtOrderFromJSON(JSON.stringify(urlParams)),
+        );
+
+        const missingParameters = debtEntity.getMissingParameters();
+
+        if (missingParameters.length > 0) {
+            this.setState({ initializing: false, missingParameters });
+            return;
+        }
+
+        // TODO: Improve parsing of debtOrderInstance
+        const filteredUrlParams = _.omit(urlParams, ["description", "principalTokenSymbol"]);
+
+        const debtOrder: Types.DebtOrder = debtOrderFromJSON(JSON.stringify(filteredUrlParams));
+
+        debtEntity.dharmaOrder = debtOrder;
+
+        if (!debtOrder.termsContract || !debtOrder.termsContractParameters) {
+            this.props.handleSetError(
+                "Please check your URL to make sure all terms contract information is present.",
+            );
+            return;
+        }
+
+        // We assume all debt orders are collateralized simple interest loans
+        const adapter = dharma.adapters.collateralizedSimpleInterestLoan;
+
+        const unpackedParameters: CollateralizedSimpleInterestTermsContractParameters = adapter.unpackParameters(
+            debtOrder.termsContractParameters,
+        );
+
+        // Ensure DebtOrder's principalAmount is equal to unpackedParameters' principalAmount
+        debtOrder.principalAmount = unpackedParameters.principalAmount;
+
+        // Generate information to display loan description
+        let principalTokenSymbol = await dharma.contracts.getTokenSymbolByIndexAsync(
+            unpackedParameters.principalTokenIndex,
+        );
+        let collateralTokenSymbol = await dharma.contracts.getTokenSymbolByIndexAsync(
+            unpackedParameters.collateralTokenIndex,
+        );
+
+        const principalTokenAmount = new Types.TokenAmount({
+            symbol: principalTokenSymbol,
+            amount: new BigNumber(unpackedParameters.principalAmount),
+            type: Types.TokenAmountType.Raw,
+        });
+
+        const collateralTokenAmount = new Types.TokenAmount({
+            symbol: collateralTokenSymbol,
+            amount: new BigNumber(unpackedParameters.collateralAmount),
+            type: Types.TokenAmountType.Raw,
+        });
+
+        this.setState({
+            amortizationUnit: unpackedParameters.amortizationUnit,
+            collateralTokenAmount,
+            description,
+            gracePeriodInDays: unpackedParameters.gracePeriodInDays,
+            initializing: false,
+            interestRate: unpackedParameters.interestRate,
+            issuanceHash: urlParams.issuanceHash,
+            debtEntity,
+            principalTokenAmount,
+            termLength: unpackedParameters.termLength,
+        });
     }
 
     confirmationModalToggle() {
@@ -188,17 +209,17 @@ class FillLoanEntered extends React.Component<Props, States> {
 
         try {
             this.props.handleSetError("");
+
             const { dharma, accounts } = this.props;
+            const { debtEntity } = this.state;
+
             if (!dharma) {
                 this.props.handleSetError(web3Errors.UNSUPPORTED_NETWORK);
                 return;
             } else if (!accounts.length) {
                 this.props.handleSetError(web3Errors.UNABLE_TO_FIND_ACCOUNTS);
                 return;
-            }
-            const { debtEntity, issuanceHash } = this.state;
-
-            if (!debtEntity) {
+            } else if (!debtEntity) {
                 this.props.handleSetError("Unable to find debt order");
                 return;
             }
@@ -229,7 +250,7 @@ class FillLoanEntered extends React.Component<Props, States> {
                     confirmationModal: false,
                 });
             } else {
-                this.props.handleFillDebtEntity(issuanceHash);
+                this.props.handleFillDebtEntity(debtEntity.issuanceHash);
 
                 // HACK: Because principalToken is technically optional,
                 //      we have to provide an alternative to it if its undefined
