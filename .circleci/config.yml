@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  build_and_test:
     docker:
       - image: circleci/node:9.6.1
     steps:
@@ -54,16 +54,16 @@ workflows:
   version: 2
   dharma_build_process:
     jobs:
-      - build
+      - build_and_test
       - deploy_staging:
           requires:
-              - build
+              - build_and_test
           filters:
               branches:
                   only: staging
       - deploy_production:
           requires:
-              - build
+              - build_and_test
           filters:
               branches:
                   only: master
