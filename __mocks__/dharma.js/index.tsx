@@ -60,7 +60,6 @@ const servicing = {
 
 const blockchain = {
     awaitTransactionMinedAsync: mockAwaitTransactionMinedAsync,
-    getErrorLogs: mockGetErrorLogs,
 };
 
 const order = {
@@ -72,6 +71,10 @@ const sign = {
     asDebtor: mockAsDebtor,
 };
 
+const logs = {
+    getErrorLogs: mockGetErrorLogs,
+};
+
 const mockDharma = jest.fn().mockImplementation(() => {
     return {
         contracts,
@@ -81,6 +84,7 @@ const mockDharma = jest.fn().mockImplementation(() => {
         blockchain,
         order,
         sign,
+        logs,
     };
 });
 

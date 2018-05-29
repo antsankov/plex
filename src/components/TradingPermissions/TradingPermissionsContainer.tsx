@@ -22,8 +22,8 @@ const mapStateToProps = (state: any) => {
         web3: state.web3Reducer.web3,
         networkId: state.web3Reducer.networkId,
         dharma: state.dharmaReducer.dharma,
-        tokens: state.tokenReducer.tokens,
         agreeToTerms: state.plexReducer.agreeToTerms,
+        tokens: state.tokenReducer.tokens,
     };
 };
 

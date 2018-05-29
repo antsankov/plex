@@ -209,8 +209,7 @@ describe('<FillLoanEntered />', () => {
 				const wrapper = shallow(<FillLoanEntered {... props} />);
 				await wrapper.instance().handleFillOrder();
 				const expectedTxHash = await dharma.order.fillAsync(debtEntity);
-				const expectedErrorLogs = await dharma.blockchain.getErrorLogs(expectedTxHash);
-				await expect(dharma.blockchain.getErrorLogs).toHaveBeenCalledWith(expectedTxHash);
+				await expect(dharma.logs.getErrorLogs).toHaveBeenCalledWith(expectedTxHash);
 			});
 
 			it('calls props handleFillDebtEntity', async () => {
@@ -239,12 +238,12 @@ describe('<FillLoanEntered />', () => {
 
 		describe('#getErrorLogs has error', () => {
 			it('should call props.handleSetError', async () => {
-				dharma.blockchain.getErrorLogs = jest.fn( async(txHash) => ['Some error message']);
+				dharma.logs.getErrorLogs = jest.fn( async(txHash) => ['Some error message']);
 				const wrapper = shallow(<FillLoanEntered {... props} />);
 				await wrapper.instance().handleFillOrder();
 				await expect(props.handleSetError).toHaveBeenCalled();
 				await expect(props.handleFillDebtEntity).not.toHaveBeenCalled();
-				dharma.blockchain.getErrorLogs.mockRestore();
+				dharma.logs.getErrorLogs.mockRestore();
 			});
 		});
 

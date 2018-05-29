@@ -5,7 +5,7 @@ export const mockAwaitTransactionMinedAsync = jest.fn( async(txHash, pollingTime
 	return receipt;
 });
 
-export const mockGetErrorLogs = jest.fn( async(txHash) =>
+export const mockGetErrorLogs = jest.fn( async(txHash) => {
 	return [];
 });
 
