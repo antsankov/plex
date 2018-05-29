@@ -369,7 +369,10 @@ class RequestLoanForm extends React.Component<Props, State> {
     }
 
     schemaWithTokens(): JSONSchema4 {
-        const { tokens } = this.props;
+        let { tokens } = this.props;
+
+        // HACK: Temporarily disallow requesting loans with EOS.
+        tokens = _.filter(tokens, (token) => token.symbol !== "EOS");
 
         const tempSchema = _.clone(schema);
 

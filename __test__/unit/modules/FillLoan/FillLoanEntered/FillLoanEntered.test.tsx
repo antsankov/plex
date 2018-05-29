@@ -4,41 +4,18 @@ jest.unmock("@dharmaprotocol/dharma.js");
 import * as React from 'react';
 import * as Web3 from "web3";
 import { Dharma } from "@dharmaprotocol/dharma.js";
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import { FillLoanEntered } from 'src/modules/FillLoan/FillLoanEntered/FillLoanEntered';
-import { FillLoanEnteredContainer } from 'src/modules/FillLoan/FillLoanEntered/FillLoanEnteredContainer';
-import { PaperLayout } from 'src/layouts';
-import {
-	Header,
-	ConfirmationModal,
-	MainWrapper
-} from 'src/components';
+
 import { OpenCollateralizedDebtEntity } from "src/models";
-import { Col } from 'reactstrap';
-import { SuccessModal } from 'src/modules/FillLoan/FillLoanEntered/SuccessModal';
-import {
-	LoanInfoContainer,
-	HalfCol,
-	InfoItem,
-	Title,
-	Content,
-	ButtonContainer,
-	DeclineButton,
-	FillLoanButton
-} from 'src/modules/FillLoan/FillLoanEntered/styledComponents';
+
 import { BigNumber } from 'bignumber.js';
-import { Link, browserHistory } from 'react-router';
-import configureStore from 'redux-mock-store';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { fillDebtEntity } from 'src/modules/FillLoan/FillLoanEntered/actions';
+import { browserHistory } from 'react-router';
 import { DebtKernel } from '@dharmaprotocol/contracts';
 import { Types } from '@dharmaprotocol/dharma.js';
 import { debtOrderFromJSON } from 'src/utils';
-const compact = require('lodash.compact');
 const ABIDecoder = require('abi-decoder');
 ABIDecoder.addABI(DebtKernel.abi);
-import { BarLoader } from "react-spinners";
 
 describe('<FillLoanEntered />', () => {
 	let web3;
@@ -202,7 +179,7 @@ describe('<FillLoanEntered />', () => {
 
 				dharma.order.fillAsync = jest.fn(async() => TXN_HASH);
 				dharma.blockchain.awaitTransactionMinedAsync = jest.fn();
-				dharma.blockchain.getErrorLogs = jest.fn(() => []);
+				dharma.logs.getErrorLogs = jest.fn(() => []);
 
 				wrapper = shallow(<FillLoanEntered {... props} />);
 
@@ -225,7 +202,7 @@ describe('<FillLoanEntered />', () => {
 
 			it('calls Dharma#getErrorLogs', async () => {
 				await wrapper.instance().handleFillOrder();
-				await expect(props.dharma.blockchain.getErrorLogs).toHaveBeenCalledWith(TXN_HASH);
+				await expect(props.dharma.logs.getErrorLogs).toHaveBeenCalledWith(TXN_HASH);
 			});
 
 			it('calls props handleFillDebtEntity', async () => {
@@ -252,12 +229,12 @@ describe('<FillLoanEntered />', () => {
 
 		describe('#getErrorLogs has error', () => {
 			it('should call props.handleSetError', async () => {
-				dharma.blockchain.getErrorLogs = jest.fn( async(txHash) => ['Some error message']);
+				dharma.logs.getErrorLogs = jest.fn( async(txHash) => ['Some error message']);
 				const wrapper = shallow(<FillLoanEntered {... props} />);
 				await wrapper.instance().handleFillOrder();
 				await expect(props.handleSetError).toHaveBeenCalled();
 				await expect(props.handleFillDebtEntity).not.toHaveBeenCalled();
-				dharma.blockchain.getErrorLogs.mockRestore();
+				dharma.logs.getErrorLogs.mockRestore();
 			});
 		});
 
