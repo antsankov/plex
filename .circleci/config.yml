@@ -52,7 +52,7 @@ jobs:
 
 workflows:
   version: 2
-  dharma_build_process:
+  plex_build_process:
     jobs:
       - build_and_test
       - deploy_staging:
