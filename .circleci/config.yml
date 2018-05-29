@@ -32,7 +32,7 @@ jobs:
             command: npm run build
         - run:
             name: install aws cli
-            command: apt-get update && apt-get install -y awscli
+            command: sudo apt-get update && sudo apt-get install -y awscli
         - run: yarn deploy:staging
 
 workflows:
