@@ -30,6 +30,9 @@ jobs:
         - run:
             name: compile
             command: npm run build
+        - run:
+            name: install aws cli
+            command: apt-get update && apt-get install -y awscli
         - run: yarn deploy:staging
 
 workflows:
