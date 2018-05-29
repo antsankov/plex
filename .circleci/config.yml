@@ -24,6 +24,12 @@ jobs:
         - image: circleci/node:9.6.1
       steps:
         - checkout
+        - run:
+            name: install dependencies
+            command: yarn
+        - run:
+            name: compile
+            command: npm run build
         - run: yarn deploy
 
 workflows:
