@@ -12,11 +12,6 @@ jobs:
         - run:
             name: compile
             command: npm run build
-  test:
-      docker:
-        - image: circleci/node:9.6.1
-      steps:
-        - checkout
         - run:
             name: testrpc
             command: yarn chain
@@ -36,15 +31,15 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - test:
-          requires:
-            - build
-  build_and_deploy:
-      jobs:
-          - build_and_test
-          - deploy:
-              requires:
-                  - build_and_test
-              filters:
-                  branches:
-                      only: master
+  # build_test_deploy:
+  #     jobs:
+  #         - build
+  #         - test:
+  #             requires:
+  #               - build
+  #         - deploy:
+  #             requires:
+  #                 - test
+  #             filters:
+  #                 branches:
+  #                     only: master
