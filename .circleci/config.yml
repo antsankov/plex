@@ -39,11 +39,10 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-        - deploy
-      # - build
-      # - deploy:
-      #     requires:
-      #         - build
-      #     filters:
-      #         branches:
-      #             only: staging
+      - build
+      - deploy:
+          requires:
+              - build
+          filters:
+              branches:
+                  only: staging
