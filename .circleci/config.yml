@@ -6,12 +6,40 @@ jobs:
       - image: circleci/node:9.6.1
     steps:
         - checkout
-        - run: yarn
+        - run:
+            name: install dependencies
+            command: yarn
+        - run:
+            name: compile
+            command: npm run build
         - run:
             name: testrpc
             command: yarn chain
             background: true
-        - run: sleep 6
         - run: yarn contracts:migrate
         - run: yarn migrations:loans
         - run: yarn jest --maxWorkers 2
+  deploy:
+      docker:
+        - image: circleci/node:9.6.1
+      steps:
+        - checkout
+        - run:
+            name: install dependencies
+            command: yarn
+        - run:
+            name: compile
+            command: npm run build
+        - run: yarn deploy:staging
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+              - build
+          filters:
+              branches:
+                  only: staging
