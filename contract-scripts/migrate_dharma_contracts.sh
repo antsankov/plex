@@ -5,14 +5,22 @@ NO_COLOR='\033[0m'
 
 mkdir -p logs
 
-DHARMA_JS_REPO=`pwd`
-LOGS=$DHARMA_JS_REPO/logs/dharma_contract_migration.txt
+DHARMA_PLEX_REPO=`pwd`
 
-DHARMA_SMART_CONTRACTS=$DHARMA_JS_REPO/node_modules/@dharmaprotocol/contracts
+LOGS=$DHARMA_PLEX_REPO/logs/dharma_contract_migration.txt
 
+DHARMA_SMART_CONTRACTS=$DHARMA_PLEX_REPO/node_modules/@dharmaprotocol/dharma.js/node_modules/@dharmaprotocol/contracts
+DHARMA_JS=$DHARMA_PLEX_REPO/node_modules/@dharmaprotocol/dharma.js
+
+# install dharma.js
+cd $DHARMA_JS
+
+echo -e "${CYAN}Installing packages to build dharma.js...${NO_COLOR}"
+npm install >> $LOGS 2>&1
+echo -e "\n"
+
+# install and build contracts
 cd $DHARMA_SMART_CONTRACTS
-
-sleep 3
 
 echo -e "${CYAN}Installing Dharma contract deployment dependencies...${NO_COLOR}"
 npm install >> $LOGS 2>&1
@@ -24,6 +32,13 @@ echo -e "\n"
 
 echo -e "${CYAN}Transpiling newly generated artifacts for usage in the dharma.js repo...${NO_COLOR}"
 npm run dist >> $LOGS 2>&1
+echo -e "\n"
+
+# build dharma.js
+cd $DHARMA_JS
+
+echo -e "${CYAN}Building dharma.js...${NO_COLOR}"
+npm run webpack >> $LOGS 2>&1
 echo -e "\n"
 
 echo -e "${GREEN}Dependency contract migrations complete, test chain is ready for use!${NO_COLOR}"

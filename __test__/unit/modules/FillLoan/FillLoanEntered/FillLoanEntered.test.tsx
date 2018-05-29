@@ -1,6 +1,9 @@
+jest.unmock("web3");
 jest.unmock("@dharmaprotocol/dharma.js");
 
 import * as React from 'react';
+import * as Web3 from "web3";
+import { Dharma } from "@dharmaprotocol/dharma.js";
 import { shallow, mount } from 'enzyme';
 import { FillLoanEntered } from 'src/modules/FillLoan/FillLoanEntered/FillLoanEntered';
 import { FillLoanEnteredContainer } from 'src/modules/FillLoan/FillLoanEntered/FillLoanEnteredContainer';
@@ -10,6 +13,7 @@ import {
 	ConfirmationModal,
 	MainWrapper
 } from 'src/components';
+import { OpenCollateralizedDebtEntity } from "src/models";
 import { Col } from 'reactstrap';
 import { SuccessModal } from 'src/modules/FillLoan/FillLoanEntered/SuccessModal';
 import {
@@ -22,8 +26,6 @@ import {
 	DeclineButton,
 	FillLoanButton
 } from 'src/modules/FillLoan/FillLoanEntered/styledComponents';
-import MockWeb3 from '__mocks__/web3';
-import MockDharma from '__mocks__/dharma.js';
 import { BigNumber } from 'bignumber.js';
 import { Link, browserHistory } from 'react-router';
 import configureStore from 'redux-mock-store';
@@ -43,14 +45,21 @@ describe('<FillLoanEntered />', () => {
 	let dharma;
 	let props;
 	let query;
-	beforeEach(() => {
-		web3 = new MockWeb3();
-		dharma = new MockDharma();
+
+	beforeEach(async () => {
+		const provider = new Web3.providers.HttpProvider("http://localhost:8545");
+		web3 = new Web3(provider);
+		dharma = new Dharma(web3.currentProvider);
+
+		const tokenSymbol = "MKR";
+		const tokenIndex = await dharma.contracts.getTokenIndexBySymbolAsync("MKR");
+		const tokenIndexHex = tokenIndex.toString(16).padStart(2, "0");
+
 		query = {
 			amortizationUnit: "months",
-			collateralAmount: 10,
+			collateralAmount: 10000000000000000000,
 			collateralToken: "0x07e93e27ac8a1c114f1931f65e3c8b5186b9b77e",
-			collateralTokenSymbol: 'MKR',
+			collateralTokenSymbol: tokenSymbol,
 			creditor: '0x431194c3e0f35bc7f1266ec6bb85e0c5ec554935',
 			creditorFee: 0,
 			creditorSignature: '{"v":27,"r":"0xc5c0aaf7b812cb865aef48958e2d39686a13c292f8bd4a82d7b43d833fb5047d","s":"0x2fbbe9f0b8e12ed2875905740fa010bbe710c3e0c131f1efe14fb41bb7921788"}',
@@ -64,14 +73,14 @@ describe('<FillLoanEntered />', () => {
 			issuanceHash: '0x3d8e76d2022e017c6c276b44cb2e4c71bd3cc3df',
 			issuanceVersion: '0x1d8e76d2022e017c6c276b44cb2e4c71bd3cc3de',
 			kernelVersion: '0x89c5b853e9e32bf47c7da1ccb02e981b74c47f2f',
-			principalAmount: 10,
+			principalAmount: 10000000000000000000,
 			principalToken: '0x07e93e27ac8a1c114f1931f65e3c8b5186b9b77e',
-			principalTokenSymbol: 'MKR',
+			principalTokenSymbol: tokenSymbol,
 			relayer: '0x0000000000000000000000000000000000000000',
 			relayerFee: 0,
 			salt: 0,
 			termsContract: '0x1c907384489d939400fa5c6571d8aad778213d74',
-			termsContractParameters: '0x0000000000000000000000000000008500000000000000000000000000000064',
+			termsContractParameters: `0x${tokenIndexHex}000000008ac7230489e8000000c3503000c0300000008ac7230489e8000001`,
 			termLength: 12,
 			underwriter: '0x0000000000000000000000000000000000000000',
 			underwriterFee: 0,
@@ -155,9 +164,13 @@ describe('<FillLoanEntered />', () => {
 			const spy = jest.spyOn(wrapper.instance(), 'setState');
 			await wrapper.instance().getDebtEntityDetail(props.dharma, props.location.query);
 			await expect(spy).toHaveBeenCalled();
-			const expectedDebtEntity = debtOrderFromJSON(JSON.stringify(props.location.query));
+			const expectedDebtEntity = new OpenCollateralizedDebtEntity(
+				debtOrderFromJSON(JSON.stringify(props.location.query))
+			);
+
 			const { description, principalTokenSymbol, ...filteredQuery } = props.location.query;
 			expectedDebtEntity.dharmaOrder = debtOrderFromJSON(JSON.stringify(filteredQuery));
+
 			const expectedDescription = description;
 			const expectedPrincipalTokenAmount = new Types.TokenAmount({
                 symbol: principalTokenSymbol,
@@ -174,54 +187,54 @@ describe('<FillLoanEntered />', () => {
 
 	describe('#handleFillOrder', () => {
 		describe('no error', () => {
+			const TXN_HASH = "0x1234";
+
 			let debtEntity;
+			let wrapper;
+
 			beforeEach(() => {
 				debtEntity = debtOrderFromJSON(JSON.stringify(props.location.query));
 				delete(debtEntity.description);
 				delete(debtEntity.principalTokenSymbol);
+				debtEntity.dharmaOrder = debtOrderFromJSON(JSON.stringify(props.location.query));
+
 				ABIDecoder.decodeLogs = jest.fn((logs) => [{name: 'LogDebtOrderFilled'}]);
+
+				dharma.order.fillAsync = jest.fn(async() => TXN_HASH);
+				dharma.blockchain.awaitTransactionMinedAsync = jest.fn();
+				dharma.blockchain.getErrorLogs = jest.fn(() => []);
+
+				wrapper = shallow(<FillLoanEntered {... props} />);
+
+				wrapper.setState({ debtEntity });
 			});
 
 			afterEach(() => {
 				ABIDecoder.decodeLogs.mockRestore();
 			});
 
-			it('should call props handleSetError', async () => {
-				const wrapper = shallow(<FillLoanEntered {... props} />);
-				await wrapper.instance().handleFillOrder();
-				await expect(props.handleSetError).toHaveBeenCalledWith('');
-			});
-
 			it('calls Dharma#fillAsync', async () => {
-				const wrapper = shallow(<FillLoanEntered {... props} />);
 				await wrapper.instance().handleFillOrder();
-				await expect(dharma.order.fillAsync).toHaveBeenCalledWith(debtEntity, {from: props.accounts[0], gasPrice: undefined});
+				await expect(props.dharma.order.fillAsync).toHaveBeenCalledWith(debtEntity.dharmaOrder, {from: props.accounts[0], gasPrice: undefined});
 			});
 
 			it('calls Dharma#awaitTransactionMinedAsync', async () => {
-				const wrapper = shallow(<FillLoanEntered {... props} />);
 				await wrapper.instance().handleFillOrder();
-				const expectedTxHash = await dharma.order.fillAsync(debtEntity);
-				await expect(dharma.blockchain.awaitTransactionMinedAsync).toHaveBeenCalledWith(expectedTxHash, 1000, 60000);
+				await expect(props.dharma.blockchain.awaitTransactionMinedAsync).toHaveBeenCalledWith(TXN_HASH, 1000, 60000);
 			});
 
 			it('calls Dharma#getErrorLogs', async () => {
-				const wrapper = shallow(<FillLoanEntered {... props} />);
 				await wrapper.instance().handleFillOrder();
-				const expectedTxHash = await dharma.order.fillAsync(debtEntity);
-				const expectedErrorLogs = await dharma.blockchain.getErrorLogs(expectedTxHash);
-				await expect(dharma.blockchain.getErrorLogs).toHaveBeenCalledWith(expectedTxHash);
+				await expect(props.dharma.blockchain.getErrorLogs).toHaveBeenCalledWith(TXN_HASH);
 			});
 
 			it('calls props handleFillDebtEntity', async () => {
-				const wrapper = shallow(<FillLoanEntered {... props} />);
 				await wrapper.instance().handleFillOrder();
 				await expect(props.handleFillDebtEntity).toHaveBeenCalled();
 			});
 
 			it('calls successModalToggle', async () => {
-				const spy = jest.spyOn(FillLoanEntered.prototype, 'successModalToggle');
-				const wrapper = shallow(<FillLoanEntered {... props} />);
+				const spy = jest.spyOn(wrapper.instance(), 'successModalToggle');
 				await wrapper.instance().handleFillOrder();
 				await expect(spy).toHaveBeenCalled();
 			});
