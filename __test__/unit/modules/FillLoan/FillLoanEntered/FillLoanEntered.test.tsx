@@ -1,42 +1,25 @@
 jest.unmock("@dharmaprotocol/dharma.js");
 
 import * as React from 'react';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import { FillLoanEntered } from 'src/modules/FillLoan/FillLoanEntered/FillLoanEntered';
-import { FillLoanEnteredContainer } from 'src/modules/FillLoan/FillLoanEntered/FillLoanEnteredContainer';
 import { PaperLayout } from 'src/layouts';
 import {
 	Header,
 	ConfirmationModal,
 	MainWrapper
 } from 'src/components';
-import { Col } from 'reactstrap';
 import { SuccessModal } from 'src/modules/FillLoan/FillLoanEntered/SuccessModal';
-import {
-	LoanInfoContainer,
-	HalfCol,
-	InfoItem,
-	Title,
-	Content,
-	ButtonContainer,
-	DeclineButton,
-	FillLoanButton
-} from 'src/modules/FillLoan/FillLoanEntered/styledComponents';
+
 import MockWeb3 from '__mocks__/web3';
 import MockDharma from '__mocks__/dharma.js';
 import { BigNumber } from 'bignumber.js';
-import { Link, browserHistory } from 'react-router';
-import configureStore from 'redux-mock-store';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { fillDebtEntity } from 'src/modules/FillLoan/FillLoanEntered/actions';
+import { browserHistory } from 'react-router';
 import { DebtKernel } from '@dharmaprotocol/contracts';
 import { Types } from '@dharmaprotocol/dharma.js';
 import { debtOrderFromJSON } from 'src/utils';
-const compact = require('lodash.compact');
 const ABIDecoder = require('abi-decoder');
 ABIDecoder.addABI(DebtKernel.abi);
-import { BarLoader } from "react-spinners";
 
 describe('<FillLoanEntered />', () => {
 	let web3;
@@ -209,6 +192,7 @@ describe('<FillLoanEntered />', () => {
 				const wrapper = shallow(<FillLoanEntered {... props} />);
 				await wrapper.instance().handleFillOrder();
 				const expectedTxHash = await dharma.order.fillAsync(debtEntity);
+				const expectedErrorLogs = await dharma.logs.getErrorLogs(expectedTxHash);
 				await expect(dharma.logs.getErrorLogs).toHaveBeenCalledWith(expectedTxHash);
 			});
 
