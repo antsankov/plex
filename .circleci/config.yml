@@ -19,7 +19,7 @@ jobs:
         - run: yarn contracts:migrate
         - run: yarn migrations:loans
         - run: yarn jest --maxWorkers 2
-  deploy-staging:
+  deploy_staging:
       docker:
         - image: circleci/node:9.6.1
       steps:
@@ -34,34 +34,34 @@ jobs:
             name: install aws cli
             command: sudo apt-get update && sudo apt-get install -y awscli
         - run: yarn deploy:staging
-    deploy-production:
-        docker:
-          - image: circleci/node:9.6.1
-        steps:
-          - checkout
-          - run:
-              name: install dependencies
-              command: yarn
-          - run:
-              name: compile
-              command: npm run build
-          - run:
-              name: install aws cli
-              command: sudo apt-get update && sudo apt-get install -y awscli
-          - run: yarn deploy
+  deploy_production:
+      docker:
+        - image: circleci/node:9.6.1
+      steps:
+        - checkout
+        - run:
+            name: install dependencies
+            command: yarn
+        - run:
+            name: compile
+            command: npm run build
+        - run:
+            name: install aws cli
+            command: sudo apt-get update && sudo apt-get install -y awscli
+        - run: yarn deploy
 
 workflows:
   version: 2
   dharma_build_process:
     jobs:
       - build
-      - deploy-staging:
+      - deploy_staging:
           requires:
               - build
           filters:
               branches:
                   only: staging
-      - deploy-production:
+      - deploy_production:
           requires:
               - build
           filters:
