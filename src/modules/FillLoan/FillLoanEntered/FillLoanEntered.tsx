@@ -242,7 +242,7 @@ class FillLoanEntered extends React.Component<Props, States> {
 
             this.setState({ awaitingTransaction: false });
 
-            const errorLogs = await dharma.blockchain.getErrorLogs(txHash);
+            const errorLogs = await dharma.logs.getErrorLogs(txHash);
 
             if (errorLogs.length) {
                 this.props.handleSetError(errorLogs[0]);

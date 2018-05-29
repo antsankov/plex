@@ -242,7 +242,7 @@ class ActiveDebtOrder extends React.Component<Props, State> {
                         );
                     })
                     .then((receipt) => {
-                        return dharma.blockchain.getErrorLogs(receipt.transactionHash);
+                        return dharma.logs.getErrorLogs(receipt.transactionHash);
                     })
                     .then(async (errors) => {
                         this.setState({ awaitingCancelTx: false });
@@ -313,7 +313,7 @@ class ActiveDebtOrder extends React.Component<Props, State> {
                 );
             })
             .then((receipt) => {
-                return dharma.blockchain.getErrorLogs(receipt.transactionHash);
+                return dharma.logs.getErrorLogs(receipt.transactionHash);
             })
             .then((errors) => {
                 this.setState({ makeRepayment: false, awaitingRepaymentTx: false });
