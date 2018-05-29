@@ -94,7 +94,7 @@
         "contracts:migrate": "bash contract-scripts/migrate_dharma_contracts.sh",
         "chain": "ganache-cli -m 'pink proof foil skull tide narrow audit card rotate forget liar favorite' -i 1457",
         "deploy": "aws s3 sync build s3://plex.dharma.io --delete --cache-control 'no-cache, no-store' --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers",
-        "deploy:staging": "aws s3 sync build s3://staging-plex.dharma.io --delete --cache-control 'no-cache, no-store' --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers",
+        "deploy:staging": "aws s3 sync build s3://staging-plex.dharma.io --delete --region us-west-2 --cache-control 'no-cache, no-store' --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers",
         "start": "node scripts/start.js --history-api-fallback",
         "build": "node scripts/build.js",
         "test:watch": "jest --watch --runInBand",
