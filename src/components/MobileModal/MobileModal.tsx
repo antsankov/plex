@@ -1,7 +1,5 @@
 import * as React from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-
-import { A } from "../../components/StyledComponents";
+import { Modal, ModalHeader, ModalBody } from "reactstrap";
 
 interface Props {
     showWeb3BrowserModal: boolean;
@@ -14,7 +12,7 @@ interface State {
 class MobileModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.toggle = this.toggle.bind(this);
+
         this.state = {
             showModal: false,
         };
@@ -32,10 +30,6 @@ class MobileModal extends React.Component<Props, State> {
         }
     }
 
-    toggle() {
-        this.setState({ showModal: !this.state.showModal });
-    }
-
     render() {
         const content = (
             <div>
@@ -45,19 +39,19 @@ class MobileModal extends React.Component<Props, State> {
                 </span>
                 <ul>
                     <li>
-                        <A href="https://www.toshi.org/" target="_blank">
+                        <a href="https://www.toshi.org/" target="_blank">
                             Toshi
-                        </A>
+                        </a>
                     </li>
                     <li>
-                        <A href="https://www.cipherbrowser.com/" target="_blank">
+                        <a href="https://www.cipherbrowser.com/" target="_blank">
                             Cipher
-                        </A>
+                        </a>
                     </li>
                     <li>
-                        <A href="https://trustwalletapp.com/" target="_blank">
+                        <a href="https://trustwalletapp.com/" target="_blank">
                             Trust Wallet
-                        </A>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -65,14 +59,9 @@ class MobileModal extends React.Component<Props, State> {
 
         return (
             <div>
-                <Modal isOpen={this.state.showModal} toggle={this.toggle}>
-                    <ModalHeader toggle={this.toggle}>Your browser isn't web3 enabled</ModalHeader>
+                <Modal isOpen={this.state.showModal}>
+                    <ModalHeader>Your browser isn't web3 enabled</ModalHeader>
                     <ModalBody>{content}</ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={this.toggle}>
-                            OK
-                        </Button>
-                    </ModalFooter>
                 </Modal>
             </div>
         );

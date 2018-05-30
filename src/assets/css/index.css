@@ -314,3 +314,8 @@ button:focus {
 	transform: translate(-50%, -50%) !important;
 	margin: 0;
 }
+
+.blue-gradient {
+	background: rgb(139,227,230);
+	background: linear-gradient(90deg, rgba(139,227,230,1) 0%, rgba(0,212,255,1) 100%);
+}
