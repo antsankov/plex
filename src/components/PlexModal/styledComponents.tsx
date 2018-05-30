@@ -23,4 +23,10 @@ export const PlexStyledModal = styled(Modal)`
     .modal-content {
         border: none;
     }
+
+    &.modal-dialog {
+        @media (max-width: 568px) {
+            width: 95%;
+        }
+    }
 `;
