@@ -38,9 +38,11 @@ class MobileModal extends React.Component<Props, State> {
 
     render() {
         const content = (
-            <span>
-                Dharma Plex is a web3-enabled application. You will need to use one of the below
-                web3-enabled browsers in order to properly access this site.
+            <div>
+                <span>
+                    Dharma Plex is a web3-enabled application. You will need to use one of the below
+                    web3-enabled browsers in order to properly interact with this site.
+                </span>
                 <ul>
                     <li>
                         <A href="https://www.toshi.org/" target="_blank">
@@ -58,7 +60,7 @@ class MobileModal extends React.Component<Props, State> {
                         </A>
                     </li>
                 </ul>
-            </span>
+            </div>
         );
 
         return (
