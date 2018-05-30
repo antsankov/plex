@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Modal, ModalHeader, ModalBody } from "reactstrap";
+
+import {
+    PlexStyledModal,
+    PlexModalHeader,
+    PlexModalTitle,
+    PlexModalBody,
+} from "./styledComponents";
 
 interface Props {
     children: JSX.Element;
@@ -12,10 +18,12 @@ class PlexModal extends React.Component<Props, {}> {
         const { showModal, title, children } = this.props;
 
         return (
-            <Modal isOpen={showModal}>
-                <ModalHeader>{title}</ModalHeader>
-                <ModalBody>{children}</ModalBody>
-            </Modal>
+            <PlexStyledModal isOpen={showModal}>
+                <PlexModalHeader>
+                    <PlexModalTitle>{title}</PlexModalTitle>
+                </PlexModalHeader>
+                <PlexModalBody>{children}</PlexModalBody>
+            </PlexStyledModal>
         );
     }
 }
