@@ -10,7 +10,7 @@ interface State {
     showModal: boolean;
 }
 
-class MobileModal extends React.Component<Props, State> {
+class Web3Modal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -95,4 +95,4 @@ class MobileModal extends React.Component<Props, State> {
     }
 }
 
-export { MobileModal };
+export { Web3Modal };
