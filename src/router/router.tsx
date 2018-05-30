@@ -64,7 +64,7 @@ class AppRouter extends React.Component<Props, {}> {
         try {
             web3 = await this.instantiateWeb3(env);
         } catch {
-            dispatch(nonWeb3EnabledBrowserDetected);
+            dispatch(nonWeb3EnabledBrowserDetected());
             return;
         }
 
