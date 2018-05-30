@@ -4,8 +4,8 @@ import {
     Web3BrowserIconWrapperLeft,
     Web3BrowserIcon,
 } from "./styledComponents";
-
 import { PlexModal } from "../PlexModal";
+import Icon from "../Icon/Icon";
 
 interface Props {
     showWeb3BrowserModal: boolean;
@@ -77,7 +77,14 @@ class MobileModal extends React.Component<Props, State> {
             </div>
         );
 
-        const title = "Uh oh -- Your browser isn't Web3-enabled";
+        const title = (
+            <div>
+                <div>
+                    <Icon icon="exclamation-circle" />Uh oh!
+                </div>
+                <div>Your browser isn't Web3-enabled</div>
+            </div>
+        );
 
         return (
             <PlexModal showModal={this.state.showModal} title={title}>
