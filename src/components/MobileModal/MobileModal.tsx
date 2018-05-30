@@ -1,5 +1,10 @@
 import * as React from "react";
 import { Modal, ModalHeader, ModalBody } from "reactstrap";
+import {
+    Web3BrowserIconWrapper,
+    Web3BrowserIconWrapperLeft,
+    Web3BrowserIcon,
+} from "./styledComponents";
 
 interface Props {
     showWeb3BrowserModal: boolean;
@@ -31,29 +36,43 @@ class MobileModal extends React.Component<Props, State> {
     }
 
     render() {
+        const toshi = require("../../assets/img/toshi.png");
+        const trustWallet = require("../../assets/img/trust_wallet.png");
+        const metamask = require("../../assets/img/metamask.png");
+
         const content = (
             <div>
-                <span>
-                    Dharma Plex is a web3-enabled application. You will need to use one of the below
-                    web3-enabled browsers in order to properly interact with this site.
-                </span>
-                <ul>
-                    <li>
+                <p>
+                    Dharma Plex is a Web3-enabled application — that’s a fancy way of saying that it
+                    needs to be plugged into the blockchain.
+                </p>
+                <p>
+                    You’ll need to use one of the below Web3-enabled browsers in order to properly
+                    interact with this site:
+                </p>
+
+                <h3>#desktop</h3>
+                <div>
+                    <Web3BrowserIconWrapperLeft>
+                        <a href="https://www.metamask.org/" target="_blank">
+                            <Web3BrowserIcon src={metamask} alt="metamask" />
+                        </a>
+                    </Web3BrowserIconWrapperLeft>
+                </div>
+
+                <h3>#mobile</h3>
+                <div>
+                    <Web3BrowserIconWrapperLeft>
                         <a href="https://www.toshi.org/" target="_blank">
-                            Toshi
+                            <Web3BrowserIcon src={toshi} alt="Toshi" />
                         </a>
-                    </li>
-                    <li>
-                        <a href="https://www.cipherbrowser.com/" target="_blank">
-                            Cipher
-                        </a>
-                    </li>
-                    <li>
+                    </Web3BrowserIconWrapperLeft>
+                    <Web3BrowserIconWrapper>
                         <a href="https://trustwalletapp.com/" target="_blank">
-                            Trust Wallet
+                            <Web3BrowserIcon src={trustWallet} alt="Trust Wallet" />
                         </a>
-                    </li>
-                </ul>
+                    </Web3BrowserIconWrapper>
+                </div>
             </div>
         );
 
