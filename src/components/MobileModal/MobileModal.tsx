@@ -1,10 +1,11 @@
 import * as React from "react";
-import { Modal, ModalHeader, ModalBody } from "reactstrap";
 import {
     Web3BrowserIconWrapper,
     Web3BrowserIconWrapperLeft,
     Web3BrowserIcon,
 } from "./styledComponents";
+
+import { PlexModal } from "../PlexModal";
 
 interface Props {
     showWeb3BrowserModal: boolean;
@@ -76,13 +77,12 @@ class MobileModal extends React.Component<Props, State> {
             </div>
         );
 
+        const title = "Uh oh -- Your browser isn't Web3-enabled";
+
         return (
-            <div>
-                <Modal isOpen={this.state.showModal}>
-                    <ModalHeader>Your browser isn't web3 enabled</ModalHeader>
-                    <ModalBody>{content}</ModalBody>
-                </Modal>
-            </div>
+            <PlexModal showModal={this.state.showModal} title={title}>
+                {content}
+            </PlexModal>
         );
     }
 }
