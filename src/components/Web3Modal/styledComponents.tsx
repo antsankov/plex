@@ -6,7 +6,7 @@ export const Web3BrowserIconWrapper = styled.div`
 `;
 
 export const Web3BrowserIcon = styled.img`
-    height: 36px;
+    height: 60px;
 `;
 
 export const Web3BrowserIcons = styled.div`
