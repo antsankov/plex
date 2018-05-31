@@ -82,12 +82,11 @@ class Web3Modal extends React.Component<Props, State> {
 
         const content = (
             <div>
-                <div>
+                <p>
                     Dharma Plex is a Web3-enabled application, which is just a fancy way of saying
                     that it needs to be plugged into the Ethereum blockchain.
-                </div>
-                <br />
-                {preamble}
+                </p>
+                <p>{preamble}</p>
                 <Web3BrowserIcons>{browserIcons}</Web3BrowserIcons>
             </div>
         );
