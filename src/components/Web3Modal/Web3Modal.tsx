@@ -33,9 +33,9 @@ class Web3Modal extends React.Component<Props, State> {
     }
 
     render() {
-        const toshi = require("../../assets/img/toshi.png");
-        const trustWallet = require("../../assets/img/trust_wallet.png");
-        const metamask = require("../../assets/img/metamask.png");
+        const toshi = require("../../assets/img/web3/toshi.png");
+        const trustWallet = require("../../assets/img/web3/trust_wallet.png");
+        const metamask = require("../../assets/img/web3/metamask.png");
 
         const mobileBrowsers = (
             <div>
