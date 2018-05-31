@@ -36,7 +36,6 @@ class Web3Modal extends React.Component<Props, State> {
         const toshi = require("../../assets/img/toshi.png");
         const trustWallet = require("../../assets/img/trust_wallet.png");
         const metamask = require("../../assets/img/metamask.png");
-        const brave = require("../../assets/img/brave.png");
 
         const mobileBrowsers = (
             <div>
@@ -53,16 +52,11 @@ class Web3Modal extends React.Component<Props, State> {
             </div>
         );
 
-        const desktopBrowers = (
+        const desktopBrowsers = (
             <div>
                 <Web3BrowserIconWrapper>
                     <a href="https://metamask.io/" target="_blank">
                         <Web3BrowserIcon src={metamask} alt="MetaMask" />
-                    </a>
-                </Web3BrowserIconWrapper>
-                <Web3BrowserIconWrapper>
-                    <a href="https://brave.com/" target="_blank">
-                        <Web3BrowserIcon src={brave} alt="Brave" />
                     </a>
                 </Web3BrowserIconWrapper>
             </div>
@@ -82,7 +76,7 @@ class Web3Modal extends React.Component<Props, State> {
             </div>
         );
 
-        const browserIcons = this.isMobileDevice() ? mobileBrowsers : desktopBrowers;
+        const browserIcons = this.isMobileDevice() ? mobileBrowsers : desktopBrowsers;
 
         const preamble = this.isMobileDevice() ? mobilePreamble : desktopPreamble;
 
