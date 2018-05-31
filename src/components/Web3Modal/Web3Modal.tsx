@@ -72,7 +72,7 @@ class Web3Modal extends React.Component<Props, State> {
         const desktopPreamble = (
             <div>
                 In order to use Dharma Plex on the web, you will need to install the MetaMask
-                extension, available for Chrome, Firefox, Opera, and the new Brave browser.
+                browser extension, available for Chrome, Firefox, Opera, and the new Brave browser.
             </div>
         );
 
