@@ -68,19 +68,32 @@ class Web3Modal extends React.Component<Props, State> {
             </div>
         );
 
+        const mobilePreamble = (
+            <div>
+                In order to use Dharma Plex from your phone, you will need to access it from one of
+                the below Web3 browsers available for download on the app store.
+            </div>
+        );
+
+        const desktopPreamble = (
+            <div>
+                In order to use Dharma Plex on the web, you will need to install the MetaMask
+                extension, available for Chrome, Firefox, Opera, and the new Brave browser.
+            </div>
+        );
+
         const browserIcons = this.isMobileDevice() ? mobileBrowsers : desktopBrowers;
+
+        const preamble = this.isMobileDevice() ? mobilePreamble : desktopPreamble;
 
         const content = (
             <div>
                 <div>
-                    Dharma Plex is a Web3-enabled application — that’s a fancy way of saying that it
-                    needs to be plugged into the blockchain.
+                    Dharma Plex is a Web3-enabled application, which is just a fancy way of saying
+                    that it needs to be plugged into the Ethereum blockchain.
                 </div>
                 <br />
-                <div>
-                    You’ll need to use one of the below Web3-enabled browsers in order to properly
-                    interact with this site:
-                </div>
+                {preamble}
                 <Web3BrowserIcons>{browserIcons}</Web3BrowserIcons>
             </div>
         );
