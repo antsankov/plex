@@ -1,27 +1,27 @@
 version: 2
 
 jobs:
-  build_and_test:
+  build_and_test_frontend:
     docker:
-      - image: circleci/node:9.6.1
+      - image: circleci/node:9.11.1
     steps:
         - checkout
         - run:
-            name: install dependencies
-            command: yarn
+            name: install frontend dependencies
+            command: cd ./react-ui && yarn
         - run:
-            name: compile
-            command: npm run build
+            name: compile frontend
+            command: cd ./react-ui && yarn build
         - run:
-            name: testrpc
-            command: yarn chain
+            name: run testrpc in frontend
+            command: cd ./react-ui && yarn chain
             background: true
-        - run: yarn contracts:migrate
-        - run: yarn migrations:loans
-        - run: yarn jest --maxWorkers 2
+        - run: cd ./react-ui && yarn contracts:migrate
+        - run: cd ./react-ui && yarn migrations:loans
+        - run: cd ./react-ui && yarn jest --maxWorkers 2
   deploy_staging:
       docker:
-        - image: circleci/node:9.6.1
+        - image: circleci/node:9.11.1
       steps:
         - checkout
         - run:
@@ -36,7 +36,7 @@ jobs:
         - run: yarn deploy:staging
   deploy_production:
       docker:
-        - image: circleci/node:9.6.1
+        - image: circleci/node:9.11.1
       steps:
         - checkout
         - run:
@@ -54,16 +54,4 @@ workflows:
   version: 2
   plex_build_process:
     jobs:
-      - build_and_test
-      - deploy_staging:
-          requires:
-              - build_and_test
-          filters:
-              branches:
-                  only: staging
-      - deploy_production:
-          requires:
-              - build_and_test
-          filters:
-              branches:
-                  only: master
+      - build_and_test_frontend

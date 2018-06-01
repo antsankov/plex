@@ -3,6 +3,11 @@
 # dependencies
 /node_modules
 
+# frontend dependencies and build
+react-ui/build/
+react-ui/node_modules/
+react-ui/coverage/
+
 # testing
 /coverage
 
