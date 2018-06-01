@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { Terms } from "./Terms";
-import { agreeToTerms } from "../Welcome/actions";
+import { agreeToTerms } from "../../actions";
 
 const mapStateToProps = (state: any) => {
     return {
