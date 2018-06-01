@@ -8,6 +8,7 @@ export interface Props {
     finishWalkthrough: () => void;
     tokens: TokenEntity[];
     walkthroughCompleted: boolean;
+    isMobileBrowser: boolean;
 }
 
 class Walkthrough extends React.Component<Props, {}> {
@@ -27,9 +28,9 @@ class Walkthrough extends React.Component<Props, {}> {
     }
 
     render() {
-        const { tokens, walkthroughCompleted } = this.props;
+        const { tokens, walkthroughCompleted, isMobileBrowser } = this.props;
 
-        if (walkthroughCompleted || !tokens || tokens.length === 0) {
+        if (walkthroughCompleted || !tokens || tokens.length === 0 || isMobileBrowser) {
             return null;
         }
 
