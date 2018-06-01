@@ -13,6 +13,10 @@ export const ETH_GAS_STATION_API_URL = "https://ethgasstation.info/json/ethgasAP
 export const COIN_MARKET_CAP_LISTINGS_API_URL = "https://api.coinmarketcap.com/v2/listings/";
 export const COIN_MARKET_CAP_TICKER_API_URL = "https://api.coinmarketcap.com/v2/ticker/";
 
+export const AWS_IMAGE_GENERATOR_LAMBDA_ACCESS_KEY_ID = "AKIAJGR65AG4VPFV3B3Q";
+export const AWS_IMAGE_GENERATOR_LAMBDA_SECRET_ACCESS_KEY =
+    "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";
+
 export const SUPPORTED_NETWORK_IDS = new Array(
     KOVAN_NETWORK_ID,
     LOCAL_NETWORK_ID,
