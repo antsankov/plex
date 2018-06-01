@@ -3,15 +3,17 @@ import * as React from "react";
 
 export interface Props {
     icon: string;
+    size?: number;
     color?: string;
     height?: string;
     marginRight?: string;
+    paddingBottom?: number;
     opacity?: number;
 }
 
 export default class Icon extends React.Component<Readonly<Props>, {}> {
     render() {
-        const { icon, color, height, marginRight, opacity } = this.props;
+        const { icon, size, color, height, marginRight, opacity, paddingBottom } = this.props;
 
         return (
             <i
@@ -19,7 +21,9 @@ export default class Icon extends React.Component<Readonly<Props>, {}> {
                 style={{
                     color,
                     marginRight,
+                    fontSize: `${size || 28}px`,
                     lineHeight: height,
+                    paddingBottom: `${paddingBottom || 0}px`,
                     opacity,
                 }}
             />
