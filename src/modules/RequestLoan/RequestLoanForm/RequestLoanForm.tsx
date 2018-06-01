@@ -32,7 +32,12 @@ import {
 import { RequestLoanDescription } from "./RequestLoanDescription";
 
 // Utils
-import { Analytics, generateDebtQueryParams, generateLoanDescriptionImage } from "../../../utils";
+import {
+    Analytics,
+    generateDebtQueryParams,
+    generateLoanDescriptionImage,
+    LoanDescriptionImageParameters,
+} from "../../../utils";
 
 // Validators
 import { validateTermLength, validateInterestRate, validateCollateral } from "./validator";
@@ -319,11 +324,13 @@ class RequestLoanForm extends React.Component<Props, State> {
             setPendingDebtEntity(debtEntity.issuanceHash);
 
             // Generate loan description image for open graph
-            generateLoanDescriptionImage({
+            const loanDescriptionImageParameters: LoanDescriptionImageParameters = {
                 collateralTokenAmount,
                 principalTokenAmount,
                 ...debtQueryParams,
-            });
+            };
+
+            generateLoanDescriptionImage(loanDescriptionImageParameters);
 
             browserHistory.push(`/request/success/?issuanceHash=${debtEntity.issuanceHash}`);
         } catch (e) {
