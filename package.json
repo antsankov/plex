@@ -24,6 +24,5 @@
   ],
   "license": "MIT",
   "devDependencies": {},
-  "main": "index.js",
-  "author": "Graeme <graeme@dharma.io>"
+  "main": "index.js"
 }
