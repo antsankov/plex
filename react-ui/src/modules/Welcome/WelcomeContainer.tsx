@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { Welcome } from "./Welcome";
 import { setError } from "../../components/Toast/actions";
-import { agreeToTerms } from "./actions";
+import { agreeToTerms } from "../../actions";
 
 const mapStateToProps = (state: any) => {
     return {
