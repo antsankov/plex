@@ -4,6 +4,7 @@ import { PlexModal } from "../PlexModal";
 
 interface Props {
     showWeb3BrowserModal: boolean;
+    isMobileBrowser: boolean;
 }
 
 interface State {
@@ -25,14 +26,9 @@ class Web3Modal extends React.Component<Props, State> {
         }
     }
 
-    isMobileDevice(): boolean {
-        return (
-            typeof window.orientation !== "undefined" ||
-            navigator.userAgent.indexOf("IEMobile") !== -1
-        );
-    }
-
     render() {
+        const { isMobileBrowser } = this.props;
+
         const toshi = require("../../assets/img/web3/toshi.png");
         const trustWallet = require("../../assets/img/web3/trust_wallet.png");
         const metamask = require("../../assets/img/web3/metamask.png");
@@ -76,9 +72,9 @@ class Web3Modal extends React.Component<Props, State> {
             </div>
         );
 
-        const browserIcons = this.isMobileDevice() ? mobileBrowsers : desktopBrowsers;
+        const browserIcons = isMobileBrowser ? mobileBrowsers : desktopBrowsers;
 
-        const preamble = this.isMobileDevice() ? mobilePreamble : desktopPreamble;
+        const preamble = isMobileBrowser ? mobilePreamble : desktopPreamble;
 
         const content = (
             <div>
