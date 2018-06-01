@@ -5,3 +5,10 @@ export const finishWalkthrough = () => {
         type: actionsEnums.FINISH_WALKTHROUGH,
     };
 };
+
+export const detectMobileBrowser = (isMobileBrowser: boolean) => {
+    return {
+        type: actionsEnums.DETECT_MOBILE_BROWSER,
+        isMobileBrowser,
+    };
+};

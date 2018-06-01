@@ -9,6 +9,8 @@ describe("<App />", () => {
         const props = {
             web3: new MockWeb3(),
             accounts: ["account1"],
+            showWeb3BrowserModal: true,
+            detectMobileBrowser: (isMobileBrowser: boolean) => {},
         };
         shallow(<App {...props} />);
     });

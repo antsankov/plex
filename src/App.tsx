@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Web3 from "web3";
 
 import { PageLayout } from "./layouts";
-import { Web3Modal } from "./components/Web3Modal";
+import { Web3ModalContainer } from "./components/Web3Modal";
 
 const Intercom = require("react-intercom").default;
 const promisify = require("tiny-promisify");
@@ -11,6 +11,7 @@ interface Props {
     web3: Web3;
     accounts: string[];
     showWeb3BrowserModal: boolean;
+    detectMobileBrowser: (isMobileBrowser: boolean) => void;
 }
 
 interface State {
@@ -26,7 +27,16 @@ class App extends React.Component<Props, State> {
         };
     }
 
+    isMobileDevice(): boolean {
+        return (
+            typeof window.orientation !== "undefined" ||
+            navigator.userAgent.indexOf("IEMobile") !== -1
+        );
+    }
+
     componentDidMount() {
+        this.props.detectMobileBrowser(this.isMobileDevice());
+
         const intervalId = setInterval(
             () => this.checkAccount(this.props.web3, this.props.accounts),
             1000,
@@ -54,7 +64,7 @@ class App extends React.Component<Props, State> {
             <PageLayout>
                 {this.props.children}
                 <Intercom appID={"ll37s9fu"} />
-                <Web3Modal showWeb3BrowserModal={this.props.showWeb3BrowserModal} />
+                <Web3ModalContainer showWeb3BrowserModal={this.props.showWeb3BrowserModal} />
             </PageLayout>
         );
     }

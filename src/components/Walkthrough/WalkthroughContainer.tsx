@@ -6,6 +6,7 @@ const mapStateToProps = (state: any) => {
     return {
         tokens: state.tokenReducer.tokens,
         walkthroughCompleted: state.plexReducer.walkthroughCompleted,
+        isMobileBrowser: state.plexReducer.isMobileBrowser,
     };
 };
 
