@@ -63,8 +63,16 @@ class AppRouter extends React.Component<Props, {}> {
 
         try {
             web3 = await this.instantiateWeb3(env);
+            Analytics.track(Analytics.PlexVisit.Web3Enabled, {
+                category: Analytics.Category.PlexVisit,
+                nonInteraction: 1,
+            });
         } catch {
             dispatch(nonWeb3EnabledBrowserDetected());
+            Analytics.track(Analytics.PlexVisit.Web3NotEnabled, {
+                category: Analytics.Category.PlexVisit,
+                nonInteraction: 1,
+            });
             return;
         }
 

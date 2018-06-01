@@ -17,12 +17,18 @@ export namespace Analytics {
         ViewConfirmation = "View Confirmation",
     }
 
+    export enum PlexVisit {
+        Web3Enabled = "Web3 Enabled",
+        Web3NotEnabled = "Web3 Not Enabled",
+    }
+
     // The union of all Action enums
-    type Action = FillLoanAction | RequestLoanAction;
+    type Action = FillLoanAction | RequestLoanAction | PlexVisit;
 
     export enum Category {
         FillLoan = "Fill Loan",
         RequestLoan = "Request Loan",
+        PlexVisit = "Plex Visit",
     }
 
     /*
