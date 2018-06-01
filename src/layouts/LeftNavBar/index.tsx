@@ -3,7 +3,22 @@ import { IndexLink } from "react-router";
 import { Wrapper, LogoContainer, BrandLogo, StyledLink } from "./styledComponents";
 import { TradingPermissionsContainer } from "../../components";
 
-class LeftNavBar extends React.Component {
+interface Props {
+    handleCloseDrawer: () => void;
+}
+
+class LeftNavBar extends React.Component<Props> {
+    constructor(props: Props) {
+        super(props);
+
+        this.closeDrawer = this.closeDrawer.bind(this);
+    }
+
+    closeDrawer() {
+        const { handleCloseDrawer } = this.props;
+        handleCloseDrawer();
+    }
+
     render() {
         return (
             <Wrapper>
@@ -13,15 +28,30 @@ class LeftNavBar extends React.Component {
                     </IndexLink>
                 </LogoContainer>
 
-                <StyledLink to="/dashboard" className="nav-link" activeClassName="active">
+                <StyledLink
+                    to="/dashboard"
+                    onClick={this.closeDrawer}
+                    className="nav-link"
+                    activeClassName="active"
+                >
                     Dashboard
                 </StyledLink>
 
-                <StyledLink to="/request" className="nav-link" activeClassName="active">
+                <StyledLink
+                    to="/request"
+                    onClick={this.closeDrawer}
+                    className="nav-link"
+                    activeClassName="active"
+                >
                     Request Loan
                 </StyledLink>
 
-                <StyledLink to="/fill" className="nav-link" activeClassName="active">
+                <StyledLink
+                    to="/fill"
+                    onClick={this.closeDrawer}
+                    className="nav-link"
+                    activeClassName="active"
+                >
                     Fill Loan
                 </StyledLink>
 
