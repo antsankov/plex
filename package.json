@@ -26,6 +26,7 @@
         "@types/react-tooltip": "^3.3.4",
         "@types/reactstrap": "^5.0.17",
         "autoprefixer": "7.1.6",
+        "aws-sdk": "^2.249.1",
         "babel-polyfill": "^6.26.0",
         "bignumber.js": "^5.0.0",
         "bitly": "^5.0.12",
