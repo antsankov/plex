@@ -1,5 +1,6 @@
 import { connect } from "react-redux";
 import { EnsureAgreedToTerms } from "./EnsureAgreedToTerms";
+import { agreeToTerms } from "../../actions";
 
 const mapStateToProps = (state: any) => {
     return {
@@ -8,7 +9,9 @@ const mapStateToProps = (state: any) => {
 };
 
 const mapDispatchToProps = (dispatch: any) => {
-    return {};
+    return {
+        handleAgreeToTerms: (agree: boolean) => dispatch(agreeToTerms(agree)),
+    };
 };
 
 export const EnsureAgreedToTermsContainer = connect(mapStateToProps, mapDispatchToProps)(
