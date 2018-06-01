@@ -11,6 +11,7 @@ interface Props {
     web3: Web3;
     accounts: string[];
     showWeb3BrowserModal: boolean;
+    detectMobileBrowser: (isMobileBrowser: boolean) => void;
 }
 
 interface State {
@@ -26,7 +27,16 @@ class App extends React.Component<Props, State> {
         };
     }
 
+    isMobileDevice(): boolean {
+        return (
+            typeof window.orientation !== "undefined" ||
+            navigator.userAgent.indexOf("IEMobile") !== -1
+        );
+    }
+
     componentDidMount() {
+        this.props.detectMobileBrowser(this.isMobileDevice());
+
         const intervalId = setInterval(
             () => this.checkAccount(this.props.web3, this.props.accounts),
             1000,

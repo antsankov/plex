@@ -1,5 +1,6 @@
 import { connect } from "react-redux";
 import { App } from "./App";
+import { detectMobileBrowser } from "./actions";
 
 const mapStateToProps = (state: any) => {
     return {
@@ -9,4 +10,11 @@ const mapStateToProps = (state: any) => {
     };
 };
 
-export const AppContainer = connect(mapStateToProps)(App);
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        detectMobileBrowser: (isMobileBrowser: boolean) =>
+            dispatch(detectMobileBrowser(isMobileBrowser)),
+    };
+};
+
+export const AppContainer = connect(mapStateToProps, mapDispatchToProps)(App);
