@@ -5,10 +5,19 @@ import { WalkthroughContainer } from "../../components";
 
 interface Props {
     agreeToTerms: boolean;
+    handleAgreeToTerms: (agree: boolean) => void;
 }
 
 class EnsureAgreedToTerms extends React.Component<Props, {}> {
     componentDidMount() {
+        const { handleAgreeToTerms } = this.props;
+
+        // If the fill loan page is navigated to directly, automatically accept the terms
+        if (browserHistory.getCurrentLocation().pathname === "/fill/loan") {
+            handleAgreeToTerms(true);
+            return;
+        }
+
         if (!this.props.agreeToTerms) {
             browserHistory.push("/");
         }
