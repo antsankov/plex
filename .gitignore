@@ -7,6 +7,7 @@
 react-ui/build/
 react-ui/node_modules/
 react-ui/coverage/
+react-ui/logs
 
 # testing
 /coverage
