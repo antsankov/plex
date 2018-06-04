@@ -92,7 +92,6 @@
     },
     "scripts": {
         "contracts:migrate": "bash contract-scripts/migrate_dharma_contracts.sh",
-        "chain": "ganache-cli -m 'pink proof foil skull tide narrow audit card rotate forget liar favorite' -i 1457",
         "deploy": "aws s3 sync build s3://plex.dharma.io --delete --region us-west-2 --cache-control 'no-cache, no-store' --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers",
         "deploy:staging": "aws s3 sync build s3://staging-plex.dharma.io --delete --region us-west-2 --cache-control 'no-cache, no-store' --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers",
         "start": "node scripts/start.js --history-api-fallback",
@@ -106,7 +105,6 @@
     "devDependencies": {
         "enzyme": "^3.3.0",
         "enzyme-adapter-react-16": "^1.1.1",
-        "ganache-cli": "^6.1.0",
         "husky": "^0.14.3",
         "jest-enzyme": "^4.2.0",
         "prettier": "1.11.1",
