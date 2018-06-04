@@ -1,6 +1,5 @@
 {
   "name": "dharma-plex-chain",
-  "version": "1.0.0",
   "description": "Local instance of the Ethereum blockchain used by Dharma Plex for development and testing",
   "engines": {
       "node": "9.11.x"
@@ -10,12 +9,5 @@
   },
   "dependencies": {
       "ganache-cli": "^6.1.0"
-  },
-  "repository": "https://github.com/DharmaProtocol/plex/",
-  "keywords": [
-        "Dharma Protocol",
-        "Plex",
-        "blockchain"
-  ],
-  "license": "MIT"
+  }
 }
