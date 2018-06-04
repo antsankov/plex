@@ -45,7 +45,6 @@
         "jest": "20.0.4",
         "lodash.compact": "^3.0.1",
         "moment": "^2.22.0",
-        "ngrok": "^2.2.26",
         "object-assign": "4.1.1",
         "postcss-flexbugs-fixes": "3.2.0",
         "postcss-loader": "2.0.8",
@@ -93,7 +92,6 @@
         "start": "node scripts/start.js --history-api-fallback",
         "build": "node scripts/build.js",
         "test:watch": "jest --watch --runInBand",
-        "ngrok:start": "ngrok http 3000",
         "migrations:loans": "tsc; node build/dist/migrations/loans.js",
         "prettify": "prettier --write 'src/**/*.ts{,x}'",
         "precommit": "yarn prettify"
