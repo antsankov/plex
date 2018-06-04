@@ -6,7 +6,7 @@
     "node": "9.11.x"
   },
   "scripts": {
-    "chain": "ganache-cli -m 'pink proof foil skull tide narrow audit card rotate forget liar favorite' -i 1457",
+    "chain": "cd chain/ && yarn && yarn chain",
     "start": "node server",
     "test": "cd react-ui/ && yarn jest",
     "prettify": "prettier --write '{server, react-ui/src}/**/*.{ts,tsx,js}'",

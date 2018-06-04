@@ -3,6 +3,9 @@
 # dependencies
 /node_modules
 
+# /chain
+chain/node_modules
+
 # frontend dependencies and build
 react-ui/build/
 react-ui/node_modules/
