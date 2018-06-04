@@ -8,9 +8,9 @@
   "scripts": {
     "chain": "cd chain/ && yarn && yarn chain",
     "start": "node server",
-    "test": "cd react-ui/ && yarn jest",
-    "prettify": "prettier --write '{server, react-ui/src}/**/*.{ts,tsx,js}'",
-    "heroku-postbuild": "cd react-ui/ && yarn && yarn build"
+    "test": "cd client/ && yarn jest",
+    "prettify": "prettier --write '{server, client/src}/**/*.{ts,tsx,js}'",
+    "heroku-postbuild": "cd client/ && yarn && yarn build"
   },
   "husky": {
       "hooks": {
@@ -19,7 +19,7 @@
   },
   "cacheDirectories": [
     "node_modules",
-    "react-ui/node_modules"
+    "client/node_modules"
   ],
   "dependencies": {
     "express": "^4.14.1"

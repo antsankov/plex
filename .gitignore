@@ -6,11 +6,11 @@
 # /chain
 chain/node_modules
 
-# frontend dependencies and build
-react-ui/build/
-react-ui/node_modules/
-react-ui/coverage/
-react-ui/logs
+# /client
+client/build/
+client/node_modules/
+client/coverage/
+client/logs
 
 # testing
 /coverage
