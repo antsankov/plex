@@ -9,7 +9,7 @@
     "chain": "ganache-cli -m 'pink proof foil skull tide narrow audit card rotate forget liar favorite' -i 1457",
     "start": "node server",
     "test": "cd react-ui/ && yarn jest",
-    "prettify": "prettier --write 'react-ui/src/**/*.ts{,x} server/*'",
+    "prettify": "prettier --write '{server, react-ui/src}/**/*.{ts,tsx,js}'",
     "heroku-postbuild": "cd react-ui/ && yarn && yarn build"
   },
   "husky": {
