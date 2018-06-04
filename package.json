@@ -7,7 +7,8 @@
   },
   "scripts": {
     "chain": "cd chain/ && yarn && yarn chain",
-    "start": "node server",
+    "dev-client": "cd client/ && yarn && yarn start",
+    "start": "cd server/ && yarn && yarn start",
     "test": "cd client/ && yarn jest",
     "prettify": "prettier --write '{server, client/src}/**/*.{ts,tsx,js}'",
     "heroku-postbuild": "cd client/ && yarn && yarn build"
