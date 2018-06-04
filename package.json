@@ -27,15 +27,13 @@
   "repository": "https://github.com/DharmaProtocol/plex",
   "keywords": [
     "Dharma Protocol",
-    "Plex"
+    "Plex",
+    "blockchain"
   ],
   "license": "MIT",
   "devDependencies": {
-      "tslint": "^5.7.0",
-      "tslint-react": "^3.2.0",
       "prettier": "^1.11.1",
-      "husky": "^0.14.3",
-      "ganache-cli": "^6.1.0"
+      "husky": "^0.14.3"
   },
   "main": "index.js"
 }
